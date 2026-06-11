@@ -30,7 +30,9 @@ description: "Task list for DRG 批次編碼 implementation"
   - `ComboMatchRule`(combo_AX/BX/CX 回傳決策規則)— commit `55e8176`。
 - **T024 `ComboXicd` 分派器:已移植、build 綠、合成測試過**(`src/Drg.Core/Engine/ComboXicd.cs`,case 1–164 有缺號;`Cnt` 取 `ComboCounter.LastCnt` 守門;case 74 ERR 已實作)。6 個合成測試通過。**已 commit**(連同 `ComboCounter`/`GroupingContext` 的 LastCnt 修改)。
 - **T023 combo_drg 骨架:完成**。`ComboDrg.Generate`(`src/Drg.Core/Engine/ComboDrg.cs`,純函式)— marks(CandidateFilter)+ opflag ⑥(opflag=2 比 CM A/C、opflag=1 比 OP B 含 '+' 組合碼)+ MDC08 手術/非手術組 PDX_MDC 特例 + dedup/TREE_DRG DESC + 串 ComboXicd(case 5 取 MappedTreeDrg)。11 合成測試。**已 commit `eb18a82`**。
-- **測試總計**:Drg.Core.Tests **117 passed**(ComboXicd 6 + ComboDrg 11)+ Data 4 + Parity 3 + Integration 1。
+- **T026 依賴單元(由下而上)進度**:
+  - [x] **`SentinelCheck`**(哨兵早退,rddi1000_main 673–725)— XXX(MDC19/20)+ YYY/ZZZ/WWW/GGG(RDDT_XICD ICD_OP_TYPE=1 之 PRM_ICD_CHK 1/3·4/6/8 子表)+ HHH(`ophhh_chk_yyy` 硬編碼手術陣列 + 2020/07/01 出院日切換)。純函式 `string? Run(ctx, rs)`,`src/Drg.Core/Engine/SentinelCheck.cs`。**依賴地圖 1+2 完成**,無新資料表(XICD 已載)。14 合成測試。**未 commit**。
+- **測試總計**:Drg.Core.Tests **131 passed**(SentinelCheck 14 + ComboXicd 6 + ComboDrg 11)+ Data 4 + Parity 3 + Integration 1。
 - **資料**:遷移批次 1+2 完成(icd10.sqlite 共 10 表、1.59M 列);combo 叢集資料前置就緒。
 - **待辦關鍵路徑(下一輪)**:**T026 `DrgGrouper` 主編排**(rddi1000_main 等價,rddi0001 604–979)。**採由下而上:先各自把缺的依賴當獨立單元移植+測,再組 DrgGrouper**(避免在無真值下盲打 375 行主流程)。T026 依賴地圖(從原始碼數出):
   1. **XICD collection 表**(Type1_Chk1/Chk6/Chk8、Type1、Type2_ChkX)→ YYY/ZZZ/WWW/GGG 哨兵 + OR 手術偵測。表未載、repo 未建。
