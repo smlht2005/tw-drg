@@ -33,12 +33,12 @@ description: "Task list for DRG 批次編碼 implementation"
 - [x] T006 [P] `CodingResult` 模型於 `src/Drg.Core/Models/CodingResult.cs`
 - [x] T007 [P] `BatchJob` + `BatchStatus` enum 於 `src/Drg.Core/Models/BatchJob.cs`
 - [x] T008 [P] 規則集參考模型(PdxMdc / MdcDrgWgt / Xicd / Ecc / EccGroup)於 `src/Drg.Core/Ruleset/`
-- [ ] T009 參數化、provider-neutral 連線工廠於 `src/Drg.Data/DbConnectionFactory.cs`(原則 III:全參數化、無內嵌機敏)
-- [ ] T010 規則集載入(`RDDT_*` → 記憶體、版次化)於 `src/Drg.Data/RulesetRepository.cs`
-- [ ] T011 固定欄位 CSV 讀取 → `ClaimEncounter` 於 `src/Drg.Core/Io/ClaimCsvReader.cs`(FR-014 輸入相容)
-- [ ] T012 Golden 回歸樣本測試骨架 + fixtures 於 `tests/Drg.Parity.Tests/GoldenCorpus/`(原則 II)
+- [x] T009 參數化、provider-neutral 連線工廠於 `src/Drg.Data/DbConnectionFactory.cs`(原則 III:全參數化、無內嵌機敏)
+- [x] T010 規則集載入(`RDDT_*` → 記憶體、版次化)於 `src/Drg.Data/RulesetRepository.cs`
+- [x] T011 固定欄位 CSV 讀取 → `ClaimEncounter` 於 `src/Drg.Core/Io/ClaimCsvReader.cs`(FR-014 輸入相容)
+- [x] T012 Golden 回歸樣本測試骨架 + fixtures 於 `tests/Drg.Parity.Tests/GoldenCorpus/`(原則 II)
 - [ ] T012a [H1] 取得/整理**官方 Tw-DRG 115/01/01 測試案例集** + legacy 輸出樣本,作為 golden corpus 來源於 `tests/Drg.Parity.Tests/GoldenCorpus/`(SC-002 / 原則 I·II 前置;**阻斷 T014**)
-- [ ] T013 批次協調骨架(`BatchId` 資料隔離、起訖時間)於 `src/Drg.Core/BatchCoder.cs`
+- [x] T013 批次協調骨架(`BatchId` 資料隔離、起訖時間)於 `src/Drg.Core/BatchCoder.cs`
 
 **Checkpoint**: 基礎就緒 — 使用者故事可開工。
 
