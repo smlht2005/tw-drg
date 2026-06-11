@@ -1,0 +1,6 @@
+@Drg.Api_HostAddress = http://localhost:5058
+
+GET {{Drg.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
