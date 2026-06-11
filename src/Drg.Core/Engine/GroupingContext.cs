@@ -18,6 +18,7 @@ public sealed class GroupingContext
     public string ChildBirthday { get; init; } = "";   // H_CHILD_BIRTHDAY(903 新生兒)
     public string DepFlag { get; set; } = "";         // v_depflag(P=外科 / M=內科)
     public string FilterMdc { get; set; } = "";       // v_MDC_1(候選查詢用 MDC,可為 00/UN/22…)
+    public int OpFlag { get; set; }                   // opflag(1=手術導向比 OP / 2=診斷導向比 CM),per combo_drg 呼叫設定
 
     // 跨模組輸出狀態
     public string SexArr { get; set; } = "";          // sex_arr(供 mdc_chk 性別分流)
