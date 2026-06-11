@@ -37,6 +37,7 @@ description: "Task list for DRG 批次編碼 implementation"
 - [ ] T010 規則集載入(`RDDT_*` → 記憶體、版次化)於 `src/Drg.Data/RulesetRepository.cs`
 - [ ] T011 固定欄位 CSV 讀取 → `ClaimEncounter` 於 `src/Drg.Core/Io/ClaimCsvReader.cs`(FR-014 輸入相容)
 - [ ] T012 Golden 回歸樣本測試骨架 + fixtures 於 `tests/Drg.Parity.Tests/GoldenCorpus/`(原則 II)
+- [ ] T012a [H1] 取得/整理**官方 Tw-DRG 115/01/01 測試案例集** + legacy 輸出樣本,作為 golden corpus 來源於 `tests/Drg.Parity.Tests/GoldenCorpus/`(SC-002 / 原則 I·II 前置;**阻斷 T014**)
 - [ ] T013 批次協調骨架(`BatchId` 資料隔離、起訖時間)於 `src/Drg.Core/BatchCoder.cs`
 
 **Checkpoint**: 基礎就緒 — 使用者故事可開工。
@@ -59,6 +60,7 @@ description: "Task list for DRG 批次編碼 implementation"
 ### Implementation
 
 - [ ] T019 [US1] 年齡/月/日計算器於 `src/Drg.Core/Engine/AgeCalculator.cs`
+- [ ] T019a [US1] [M2] 性別推導(Sex 空白 → 由 Pid,legacy `convertSex`)於 `src/Drg.Core/Engine/SexResolver.cs`(FR-004 邊界;影響 MDC 11/12/13 分流)
 - [ ] T020 [US1] ICD-10-CM 驗證關卡於 `src/Drg.Core/Engine/Icd10CmCheck.cs`
 - [ ] T021 [US1] ECC(CC/MCC)分級於 `src/Drg.Core/Engine/EccCheck.cs`(藍圖 `docs/ecc_chk_yyy_flow.md`)
 - [ ] T022 [US1] MDC 指派於 `src/Drg.Core/Engine/MdcCheck.cs`(藍圖 `docs/mdc_chk_yyy_flow.md`)
@@ -68,6 +70,7 @@ description: "Task list for DRG 批次編碼 implementation"
 - [ ] T026 [US1] 分組主協調(rddi1000_main 等價)於 `src/Drg.Core/Engine/DrgGrouper.cs`(藍圖 `docs/rddi1000_main_flow.md`)
 - [ ] T027 [US1] UTF-8 結果輸出於 `src/Drg.Core/Io/ResultWriter.cs`(FR-014)
 - [ ] T028 [US1] 串接 `BatchCoder` happy path:讀 → 分組 → 寫 於 `src/Drg.Core/BatchCoder.cs`
+- [ ] T028a [US1] [M1] 將 `rulesetVersion`(115/01/01)標註於 `BatchJob` 與結果輸出(FR-013 可追溯)於 `src/Drg.Core/BatchCoder.cs`、`src/Drg.Core/Io/ResultWriter.cs`
 
 **Checkpoint**: US1 可獨立運行——全合法檔產出正確 DRG 結果。
 
