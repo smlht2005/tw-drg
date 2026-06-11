@@ -64,7 +64,10 @@ description: "Task list for DRG 批次編碼 implementation"
 - [x] T020 [US1] ICD-10-CM 驗證關卡於 `src/Drg.Core/Engine/Icd10CmCheck.cs`(含 `GroupingContext` 狀態物件;errcode_chk_yyy + icdop_chk_yyy + chk5 組合);修正 Foundational 的 `Xicd`/`RDDT_XICD_V` schema 對齊
 - [x] T021 [US1] ECC(CC/MCC)分級於 `src/Drg.Core/Engine/EccCheck.cs`(藍圖 `docs/ecc_chk_yyy_flow.md`)
 - [x] T022 [US1] MDC 指派於 `src/Drg.Core/Engine/MdcCheck.cs`(藍圖 `docs/mdc_chk_yyy_flow.md`)
-- [ ] T023 [US1] combo_drg 候選產生於 `src/Drg.Core/Engine/ComboDrg.cs`(藍圖 `docs/combo_drg_yyy_flow.md`)
+- [~] T023 [US1] combo_drg 候選產生(藍圖 `docs/combo_drg_yyy_flow.md`)
+  - [x] marks 篩選(CC/AGE/LIVE/DEP)純函式於 `src/Drg.Core/Engine/CandidateFilter.cs` + 合成測試
+  - [ ] 查詢層:逐筆參數化 SQL 取候選列(`RDDT_MDC_DRG_XICD_*_V`)— **阻塞**:icd10.sdf(SQL CE)需先遷移 SQLite
+  - [ ] opflag 之 ICD/ITEM_TYPE 比對 + per-MDC 視圖選擇(main 740–880)+ combo_xicd 串接
 - [ ] T024 [US1] combo_xicd(COMBO_NO 配方)於 `src/Drg.Core/Engine/ComboXicd.cs`(藍圖 `docs/combo_xicd_chk_yyy_flow.md`)
 - [x] T025 [US1] tree 權重決選於 `src/Drg.Core/Engine/TreeSelector.cs`(藍圖 `docs/tree_yyy_flow.md`)
 - [ ] T026 [US1] 分組主協調(rddi1000_main 等價)於 `src/Drg.Core/Engine/DrgGrouper.cs`(藍圖 `docs/rddi1000_main_flow.md`)

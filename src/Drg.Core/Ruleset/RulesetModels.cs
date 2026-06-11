@@ -16,6 +16,15 @@ public sealed record Xicd(
 // 註:combo_xicd_chk_yyy(T024)使用的 RDDT_DRG_XICD(TREE_DRG/COMBO_NO/ITEM_TYPE/
 // ICD_CODE_PLUS,30 張分片表)為另一張表,屆時再以獨立 record 載入。
 
+// RDDT_MDC_DRG_XICD_*_V:combo_drg 的 per-record 候選 join 列(權重 + ICD/年齡/CC/LIVE marks)。
+// 由查詢層(逐筆參數化 SQL)依該案件 MDC/CM/OP 碼取回;marks 篩選由 CandidateFilter 負責。
+public sealed record MdcDrgXicd(
+    string TreeDrg, string TreeMdcNo, int TreeNo, float TreeWgt, string? Dep, string? ComboNo,
+    string? LiveMark, string? ItemType, string? CcMark,
+    string? Age18Y, string? Age36Y, string? Age41Y, string? Age5Y65Y,
+    string? Age2Y, string? Age28D, string? Age2D, string? AgeMark,
+    string? IcdCode, string? IcdCodePlus);
+
 public sealed record Ecc(string Type, string IcdNo1, string IcdNoGroup);
 
 public sealed record EccGroup(string IcdNo, string IcdNoGroup);
