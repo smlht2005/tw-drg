@@ -29,16 +29,16 @@ dotnet run --project tools/Drg.Migrate -c Release -- C:\med\S_DRGService_3420
 
 ## 已遷移資料表
 
-| 階段 | 表 | 列數 | 用途 |
+| 批次 | 表 | 列數 | 用途 |
 |---|---|---|---|
-| A | `RDDT_XICD_V` | 222,162 | ICD 驗證(Icd10CmCheck) |
-| A | `RDDT_ECC_V` | 18,129 | CC/MCC(EccCheck) |
-| A | `RDDT_ECC_GROUP_V` | 509,382 | CC/MCC 群組 |
-| A | `RDDT_PDX_MDC_V` | 72,239 | 主診斷→MDC(MdcCheck) |
-| A | `RDDT_MDC_DRGWGT_V` | 1,068 | DRG 權重(TreeSelector) |
-| B(待做) | `RDDT_MDC_DRG_XICD_V` | 1,005,668 | combo_drg 候選 join 表 |
-| B(待做) | `RDDT_MDC_DRG_XICD_00_V` / `_NOTIN_V` / `_UN_V` | 258,320 | combo_drg per-MDC 變體 |
-| B(待做) | `RDDT_DRG_MDC02_V` | 3,036 | MDC02 特例 |
+| 1 | `RDDT_XICD_V` | 222,162 | ICD 驗證(Icd10CmCheck) |
+| 1 | `RDDT_ECC_V` | 18,129 | CC/MCC(EccCheck) |
+| 1 | `RDDT_ECC_GROUP_V` | 509,382 | CC/MCC 群組 |
+| 1 | `RDDT_PDX_MDC_V` | 72,239 | 主診斷→MDC(MdcCheck) |
+| 1 | `RDDT_MDC_DRGWGT_V` | 1,068 | DRG 權重(TreeSelector) |
+| 2(待做) | `RDDT_MDC_DRG_XICD_V` | 1,005,668 | combo_drg 候選 join 表 |
+| 2(待做) | `RDDT_MDC_DRG_XICD_00_V` / `_NOTIN_V` / `_UN_V` | 258,320 | combo_drg per-MDC 變體 |
+| 2(待做) | `RDDT_DRG_MDC02_V` | 3,036 | MDC02 特例 |
 
 ## 連線設定
 
