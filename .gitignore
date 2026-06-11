@@ -1,0 +1,27 @@
+# ── Legacy binary deployment (large blobs, not source) ───────────────
+*.exe
+*.dll
+*.sdf
+
+# ── Reverse-engineered / decompiled output ───────────────────────────
+# Contains embedded credentials (constitution principle III) and
+# third-party (IISI) code — MUST NOT be version-controlled.
+_decompiled/
+_decompiled_*/
+
+# ── .NET build output (future Drg.* projects) ────────────────────────
+bin/
+obj/
+*.user
+[Bb]in/
+[Oo]bj/
+
+# ── Secrets / local config ───────────────────────────────────────────
+*.env
+.env
+appsettings.*.local.json
+
+# ── OS / editor ──────────────────────────────────────────────────────
+.vs/
+.DS_Store
+Thumbs.db
