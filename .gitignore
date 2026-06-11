@@ -9,6 +9,9 @@ migration/
 *.sqlite
 *.tsv
 
+# ── Legacy-oracle harness build artifacts(編譯於部署根;僅忽略根目錄產物)─
+/DRGOracle.*
+
 # ── Reverse-engineered / decompiled output ───────────────────────────
 # Contains embedded credentials (constitution principle III) and
 # third-party (IISI) code — MUST NOT be version-controlled.
