@@ -29,9 +29,11 @@ description: "Task list for DRG 批次編碼 implementation"
   - `ComboCounter` A/B/C(combo_AX/BX/CX 計數,combo_BX 四分支)— commit `a81ed19`(A/C)+ `95ee2ae`(B)。
   - `ComboMatchRule`(combo_AX/BX/CX 回傳決策規則)— commit `55e8176`。
 - **T024 `ComboXicd` 分派器:已移植、build 綠、合成測試過**(`src/Drg.Core/Engine/ComboXicd.cs`,case 1–164 有缺號;`Cnt` 取 `ComboCounter.LastCnt` 守門;case 74 ERR 已實作)。6 個合成測試通過。**已 commit**(連同 `ComboCounter`/`GroupingContext` 的 LastCnt 修改)。
-- **測試總計**:Drg.Core.Tests **106 passed**(其中 ComboXicd 6)+ Data 4 + Parity 3 + Integration 1。
+- **T023 combo_drg 骨架:完成**。`ComboDrg.Generate`(`src/Drg.Core/Engine/ComboDrg.cs`,純函式)— marks(CandidateFilter)+ opflag ⑥(opflag=2 比 CM A/C、opflag=1 比 OP B 含 '+' 組合碼)+ MDC08 手術/非手術組 PDX_MDC 特例 + dedup/TREE_DRG DESC + 串 ComboXicd(case 5 取 MappedTreeDrg)。11 合成測試。**已 commit `eb18a82`**。
+- **測試總計**:Drg.Core.Tests **117 passed**(ComboXicd 6 + ComboDrg 11)+ Data 4 + Parity 3 + Integration 1。
 - **資料**:遷移批次 1+2 完成(icd10.sqlite 共 10 表、1.59M 列);combo 叢集資料前置就緒。
-- **待辦關鍵路徑(下一輪第一順位)**:combo_drg 最小骨架(T023 剩餘:opflag ICD/ITEM_TYPE 比對 + per-MDC 視圖選擇 + 串 ComboXicd)→ T026 `DrgGrouper` 主編排 → **擴充 oracle 含 OP 外科案,啟用完整 DRG 一致性比對**(目前 ComboXicd 只有合成「粗錯偵測」測試,尚未對 oracle 驗證)。
+- **待辦關鍵路徑(下一輪第一順位)**:**T026 `DrgGrouper` 主編排**(rddi1000_main 等價:接 CandidateRepository 載入候選 → 逐 MDC/外科內科 pass 設 opflag/depflag → ComboDrg.Generate → TreeSelector;產生 DRG/MDC/CC)→ **擴充 oracle 含 OP 外科案,啟用完整 DRG 一致性比對**(目前 ComboDrg/ComboXicd 只有合成「粗錯偵測」測試)。
+  - **已知資料缺口**:ComboXicd 計數暫以 `MdcDrgXicd` 候選列近似 → 需補 **RDDT_DRG_XICD 專屬表**的 repository,full DRG 驗證才會準。
   - **T024 已知 detail gap**:case 5 mdc02 子查詢仍以一般候選表近似(`AMdc02` → `RDDT_DRG_MDC02` 專屬路徑待補);case 74 ERR 副作用已實作但未經 oracle 驗證。
 - **未推前置**:C1 4 commit(`95ee2ae`/`a81ed19`/`025d210`/`55e8176`)+ 本輪 ComboXicd commit 在本地**待 git push**。
 
@@ -93,7 +95,7 @@ description: "Task list for DRG 批次編碼 implementation"
   - [x] marks 篩選(CC/AGE/LIVE/DEP)純函式於 `src/Drg.Core/Engine/CandidateFilter.cs` + 合成測試
   - [x] 查詢層:逐筆參數化 SQL 取候選列(`CandidateRepository`,主視圖∪NotIn∪UN、含 _00;真實資料整合測試)— commit `025d210`
   - [x] combo_AX/BX/CX 計數(`ComboCounter` A/B/C,combo_BX 四分支)+ 決策規則(`ComboMatchRule`)— commit `a81ed19`/`95ee2ae`/`55e8176`
-  - [ ] opflag 之 ICD/ITEM_TYPE 比對 + per-MDC 視圖選擇(main 740–880)+ combo_xicd 串接(combo_drg 最小骨架)
+  - [x] combo_drg 最小骨架 `ComboDrg.Generate`(opflag ⑥ ICD/ITEM_TYPE 比對 + MDC08 特例 + dedup/TREE_DRG DESC + 串 ComboXicd,純函式)+ 11 合成測試 — commit `eb18a82`
 - [~] T024 [US1] combo_xicd(COMBO_NO 配方)於 `src/Drg.Core/Engine/ComboXicd.cs`(藍圖 `docs/combo_xicd_chk_yyy_flow.md`)
   - [x] 164-case 分派器完整移植(case 1–164 有缺號)+ `LastCnt` CNT 守門 + case 74 ERR + 6 合成測試;build 綠、已 commit
   - [ ] **完整 DRG 一致性**:待串 combo_drg 最小骨架 + 主編排後以 oracle 驗證(目前僅合成粗錯偵測)
