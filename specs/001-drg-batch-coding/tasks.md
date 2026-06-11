@@ -53,7 +53,7 @@ description: "Task list for DRG 批次編碼 implementation"
 
 - [ ] T014 [P] [US1] Parity 測試:golden corpus 合法案件期望 DRG/MDC/CC 於 `tests/Drg.Parity.Tests/Us1GroupingTests.cs`
 - [x] T015 [P] [US1] 單元:年齡計算(含月/日與量化怪癖)於 `tests/Drg.Core.Tests/AgeCalculatorTests.cs`;性別推導於 `tests/Drg.Core.Tests/SexResolverTests.cs`
-- [ ] T016 [P] [US1] 單元:CC/MCC 分級(含主診斷涵蓋排除)於 `tests/Drg.Core.Tests/EccCheckTests.cs`
+- [x] T016 [P] [US1] 單元:CC/MCC 分級(MCC→T→CC 優先序、同群排除)於 `tests/Drg.Core.Tests/EccCheckTests.cs`
 - [ ] T017 [P] [US1] 單元:MDC 指派(24/25/1–23 優先序)於 `tests/Drg.Core.Tests/MdcCheckTests.cs`
 - [ ] T018 [P] [US1] 單元:tree 權重決選(MDC15 順位、權重 tie-break)於 `tests/Drg.Core.Tests/TreeSelectorTests.cs`
 
@@ -62,7 +62,7 @@ description: "Task list for DRG 批次編碼 implementation"
 - [x] T019 [US1] 年齡/月/日計算器於 `src/Drg.Core/Engine/AgeCalculator.cs`
 - [x] T019a [US1] [M2] 性別推導(Sex 空白 → 由 Pid,legacy `convertSex`)於 `src/Drg.Core/Engine/SexResolver.cs`(FR-004 邊界;影響 MDC 11/12/13 分流)
 - [x] T020 [US1] ICD-10-CM 驗證關卡於 `src/Drg.Core/Engine/Icd10CmCheck.cs`(含 `GroupingContext` 狀態物件;errcode_chk_yyy + icdop_chk_yyy + chk5 組合);修正 Foundational 的 `Xicd`/`RDDT_XICD_V` schema 對齊
-- [ ] T021 [US1] ECC(CC/MCC)分級於 `src/Drg.Core/Engine/EccCheck.cs`(藍圖 `docs/ecc_chk_yyy_flow.md`)
+- [x] T021 [US1] ECC(CC/MCC)分級於 `src/Drg.Core/Engine/EccCheck.cs`(藍圖 `docs/ecc_chk_yyy_flow.md`)
 - [ ] T022 [US1] MDC 指派於 `src/Drg.Core/Engine/MdcCheck.cs`(藍圖 `docs/mdc_chk_yyy_flow.md`)
 - [ ] T023 [US1] combo_drg 候選產生於 `src/Drg.Core/Engine/ComboDrg.cs`(藍圖 `docs/combo_drg_yyy_flow.md`)
 - [ ] T024 [US1] combo_xicd(COMBO_NO 配方)於 `src/Drg.Core/Engine/ComboXicd.cs`(藍圖 `docs/combo_xicd_chk_yyy_flow.md`)

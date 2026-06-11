@@ -16,11 +16,20 @@ public sealed class GroupingContext
     public string SexArr { get; set; } = "";          // sex_arr(供 mdc_chk 性別分流)
     public string VSexNo { get; set; } = "";          // v_sex_no
     public char[] ErrCode { get; } = NewErr();        // H_ERR_CODE_1[40](CM 0–19 / OP 20–39)
+    public string CcMark { get; set; } = "N";         // H_CC_MARK(N=無 / M=MCC / T / Y=CC)
+    public char[] CcCode { get; } = NewCc();          // H_CC_CODE_1[20](標記貢獻 CC 的 CM 欄位)
 
     private static char[] NewErr()
     {
         var a = new char[40];
         Array.Fill(a, ' ');
+        return a;
+    }
+
+    private static char[] NewCc()
+    {
+        var a = new char[20];
+        Array.Fill(a, '0');
         return a;
     }
 }
