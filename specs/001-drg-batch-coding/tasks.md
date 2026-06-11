@@ -15,6 +15,18 @@ description: "Task list for DRG 批次編碼 implementation"
 - **[P]**: 可平行(不同檔、無相依)
 - **[Story]**: US1 / US2 / US3
 - 路徑依 plan.md:`src/Drg.Core`、`src/Drg.Data`、`src/Drg.Api`、`src/Drg.Cli`;測試於 `tests/`
+- 標記:`[x]` 完成 / `[~]` 部分完成 / `[ ]` 未開始
+
+---
+
+## 目前進度快照(2026-06-11)
+
+- **Setup + Foundational**:完成(T001–T013、含 T012b Phase A 資料遷移)。
+- **US1 引擎純邏輯**:`AgeCalculator`/`SexResolver`(T019/T019a)、`Icd10CmCheck`(T020)、`EccCheck`(T021)、`MdcCheck`(T022)、`TreeSelector`(T025)、`CandidateFilter`(T023 marks 段)— 全數完成並測試。
+- **真實 parity**:`tools/LegacyOracle` 自真實 `rddi1000_main` 產生 25 案語料;`OracleParityTests` 驗證 `Icd10CmCheck→EccCheck→MdcCheck` 對 25 案 **MDC/CC 完全一致**。
+- **測試總計**:73 passed / 1 skip(Core 67、Parity 3、Data 2、Integration 1)。
+- **待辦關鍵路徑**:T012c(Phase B 遷移 combo 表)→ T023 查詢層 + T024 `ComboXicd` → T026 `DrgGrouper` 串接 → 擴充 oracle 比對完整 DRG。
+- **未推前置**:無(已推至 `origin/001-drg-batch-coding`)。
 
 ---
 
@@ -55,7 +67,9 @@ description: "Task list for DRG 批次編碼 implementation"
 
 ### Tests(先寫、先失敗 — 原則 IV)⚠️
 
-- [ ] T014 [P] [US1] Parity 測試:golden corpus 合法案件期望 DRG/MDC/CC 於 `tests/Drg.Parity.Tests/Us1GroupingTests.cs`
+- [~] T014 [P] [US1] Parity 測試:對 legacy-oracle 語料比對 DRG/MDC/CC
+  - [x] `tests/Drg.Parity.Tests/OracleParityTests.cs`:`Icd10CmCheck→EccCheck→MdcCheck` 管線對 25 案比對 **MDC/CC**(全數一致)
+  - [ ] 完整 **DRG** 比對:待 T024/T026 後啟用(並擴充含 OP 的外科案)
 - [x] T015 [P] [US1] 單元:年齡計算(含月/日與量化怪癖)於 `tests/Drg.Core.Tests/AgeCalculatorTests.cs`;性別推導於 `tests/Drg.Core.Tests/SexResolverTests.cs`
 - [x] T016 [P] [US1] 單元:CC/MCC 分級(MCC→T→CC 優先序、同群排除)於 `tests/Drg.Core.Tests/EccCheckTests.cs`
 - [x] T017 [P] [US1] 單元:MDC 指派(24/25/1–23 優先序、性別分流 B/T)於 `tests/Drg.Core.Tests/MdcCheckTests.cs`
