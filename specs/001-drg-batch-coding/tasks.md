@@ -26,8 +26,8 @@ description: "Task list for DRG 批次編碼 implementation"
 - **真實 parity**:`tools/LegacyOracle` 自真實 `rddi1000_main` 產生 25 案語料;`OracleParityTests` 驗證 `Icd10CmCheck→EccCheck→MdcCheck` 對 25 案 **MDC/CC 完全一致**。
 - **測試總計**:73 passed / 1 skip(Core 67、Parity 3、Data 2、Integration 1)。
 - **資料**:遷移批次 1+2 完成(icd10.sqlite 共 10 表、1.59M 列);combo 叢集資料前置就緒。
-- **combo 查詢層(C1)**:`ComboMatchRule`(combo_AX/BX/CX 回傳決策規則,純邏輯)已完成並合成測試(C1a);CNT/num 計數查詢(C1b)待編排提供候選表。
-- **待辦關鍵路徑**:C1b 計數查詢 → T024 `ComboXicd`(72-case 分派)→ combo_drg 串接 + 主編排 → T026 `DrgGrouper` → 擴充 oracle 比對完整 DRG。
+- **combo 查詢層(C1)**:`ComboMatchRule`(combo_AX/BX/CX 回傳決策規則,C1a)+ `CandidateRepository`(逐筆參數化 SQL 載入候選 join 列:主視圖∪NotIn∪UN、含 _00;對真實 icd10.sqlite 整合測試,C1b)皆完成。
+- **待辦關鍵路徑**:combo_AX/BX/CX 計數(CandidateRepository + ComboMatchRule 串接)→ T024 `ComboXicd`(72-case 分派)→ combo_drg 串接 + 主編排 → T026 `DrgGrouper` → 擴充 oracle 比對完整 DRG。
 - **未推前置**:無(已推至 `origin/001-drg-batch-coding`)。
 
 ---
