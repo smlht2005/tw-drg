@@ -31,9 +31,9 @@ public sealed class RulesetRepository(IDbConnectionFactory factory) : IRulesetRe
                 "AGE_CHK AS AgeChk, PRM_ICD_CHK AS PrmIcdChk, OR_NOR AS OrNor, SEX_NO AS SexNo " +
                 "FROM RDDT_XICD_V").AsList(),
             Ecc = conn.Query<Ecc>(
-                "SELECT TYPE AS Type, ICD_NO_1 AS IcdNo1, ICD_NO_GROUP AS IcdNoGroup FROM RDDT_ECC").AsList(),
+                "SELECT TYPE AS Type, ICD_NO_1 AS IcdNo1, ICD_NO_GROUP AS IcdNoGroup FROM RDDT_ECC_V").AsList(),
             EccGroup = conn.Query<EccGroup>(
-                "SELECT ICD_NO AS IcdNo, ICD_NO_GROUP AS IcdNoGroup FROM RDDT_ECC_GROUP").AsList(),
+                "SELECT ICD_NO AS IcdNo, ICD_NO_GROUP AS IcdNoGroup FROM RDDT_ECC_GROUP_V").AsList(),
         };
     }
 }

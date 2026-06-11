@@ -37,6 +37,8 @@ description: "Task list for DRG 批次編碼 implementation"
 - [x] T010 規則集載入(`RDDT_*` → 記憶體、版次化)於 `src/Drg.Data/RulesetRepository.cs`
 - [x] T011 固定欄位 CSV 讀取 → `ClaimEncounter` 於 `src/Drg.Core/Io/ClaimCsvReader.cs`(FR-014 輸入相容)
 - [x] T012 Golden 回歸樣本測試骨架 + fixtures 於 `tests/Drg.Parity.Tests/GoldenCorpus/`(原則 II)
+- [x] T012b 參考資料遷移 **Phase A**:icd10.sdf(SQL CE)→ icd10.sqlite 五張 RDDT 核心表(`scripts/export_sdf.ps1` + `tools/Drg.Migrate`;文件 `docs/data_migration.md`);整合測試 `tests/Drg.Data.Tests/RealRulesetIntegrationTests.cs` 對真實資料驗證 MdcCheck
+- [ ] T012c 參考資料遷移 **Phase B**:combo join 表(`RDDT_MDC_DRG_XICD_V` 等 1M+ 列)— combo_drg/combo_xicd 落地前置
 - [ ] T012a [H1] 取得/整理**官方 Tw-DRG 115/01/01 測試案例集** + legacy 輸出樣本,作為 golden corpus 來源於 `tests/Drg.Parity.Tests/GoldenCorpus/`(SC-002 / 原則 I·II 前置;**阻斷 T014**)
 - [x] T013 批次協調骨架(`BatchId` 資料隔離、起訖時間)於 `src/Drg.Core/BatchCoder.cs`
 

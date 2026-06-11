@@ -12,8 +12,8 @@ public static class TreeSelector
         Remap(drg);
         var set = drg.Where(d => d.Length > 0).ToHashSet();
 
-        var bestNo = 200;
-        var bestWgt = 0f;
+        var bestNo = 200L;
+        var bestWgt = 0d;
         var result = "";
         foreach (var r in rs.MdcDrgWgt)
         {
@@ -27,7 +27,7 @@ public static class TreeSelector
                 if (treeNo < bestNo) { bestNo = treeNo; bestWgt = wgt; result = treeDrg; }
                 continue;
             }
-            if (wgt == 0f) wgt = (float)ctx.MedAmt / r.AvgExp;   // legacy:零權重以平均費用回推
+            if (wgt == 0d) wgt = (double)ctx.MedAmt / r.AvgExp;   // legacy:零權重以平均費用回推
             if (wgt > bestWgt || (wgt == bestWgt && treeNo < bestNo))
             {
                 bestNo = treeNo;

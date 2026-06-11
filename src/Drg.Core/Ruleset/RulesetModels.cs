@@ -4,8 +4,9 @@ namespace Drg.Core.Ruleset;
 
 public sealed record PdxMdc(string IcdNo, string MdcCode, string? Cc, string? Op);
 
+// 數值欄用 long/double 對齊 SQLite 原生(INTEGER/REAL),避免 Dapper positional-record 型別不符。
 public sealed record MdcDrgWgt(
-    string TreeMdcNo, string TreeDrg, int TreeNo, float TreeWgt, int AvgExp,
+    string TreeMdcNo, string TreeDrg, long TreeNo, double TreeWgt, long AvgExp,
     string? Dep, string? ComboNo);
 
 // RDDT_XICD_V:主/次診斷與手術碼的有效性/性別/年齡/排除檢核(errcode_chk_yyy 用)。
@@ -19,7 +20,7 @@ public sealed record Xicd(
 // RDDT_MDC_DRG_XICD_*_V:combo_drg 的 per-record 候選 join 列(權重 + ICD/年齡/CC/LIVE marks)。
 // 由查詢層(逐筆參數化 SQL)依該案件 MDC/CM/OP 碼取回;marks 篩選由 CandidateFilter 負責。
 public sealed record MdcDrgXicd(
-    string TreeDrg, string TreeMdcNo, int TreeNo, float TreeWgt, string? Dep, string? ComboNo,
+    string TreeDrg, string TreeMdcNo, long TreeNo, double TreeWgt, string? Dep, string? ComboNo,
     string? LiveMark, string? ItemType, string? CcMark,
     string? Age18Y, string? Age36Y, string? Age41Y, string? Age5Y65Y,
     string? Age2Y, string? Age28D, string? Age2D, string? AgeMark,

@@ -3,6 +3,12 @@
 *.dll
 *.sdf
 
+# ── Derived reference data (migrated from icd10.sdf; large, regenerable) ─
+# 由 scripts/export_sdf.ps1 + tools/Drg.Migrate 產生;不納版控。
+migration/
+*.sqlite
+*.tsv
+
 # ── Reverse-engineered / decompiled output ───────────────────────────
 # Contains embedded credentials (constitution principle III) and
 # third-party (IISI) code — MUST NOT be version-controlled.
