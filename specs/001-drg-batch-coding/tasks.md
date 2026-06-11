@@ -20,19 +20,19 @@ description: "Task list for DRG 批次編碼 implementation"
 
 ## Phase 1: Setup(共用基礎)
 
-- [ ] T001 建立 .NET 8 solution 與專案:`src/Drg.Core`、`src/Drg.Data`、`src/Drg.Api`、`src/Drg.Cli`、`tests/Drg.Core.Tests`、`tests/Drg.Parity.Tests`、`tests/Drg.Integration.Tests`
-- [ ] T002 [P] 加入相依套件:Dapper、CsvHelper(`Drg.Core/Drg.Data`)、System.CommandLine(`Drg.Cli`)、xUnit + FluentAssertions(tests)
-- [ ] T003 [P] `.editorconfig` + 格式化/Lint 設定;CI build 工作流
-- [ ] T004 [P] 環境變數設定繫結(`DRG_DB_CONNECTION`、`DRG_BATCH_MAX`)於 `src/Drg.Core/Configuration/DrgOptions.cs`(機敏不內嵌,原則 III)
+- [x] T001 建立 .NET 8 solution 與專案:`src/Drg.Core`、`src/Drg.Data`、`src/Drg.Api`、`src/Drg.Cli`、`tests/Drg.Core.Tests`、`tests/Drg.Parity.Tests`、`tests/Drg.Integration.Tests`
+- [x] T002 [P] 加入相依套件:Dapper、CsvHelper(`Drg.Core/Drg.Data`)、System.CommandLine(`Drg.Cli`)、xUnit + FluentAssertions(tests)
+- [x] T003 [P] `.editorconfig` + 格式化/Lint 設定;CI build 工作流
+- [x] T004 [P] 環境變數設定繫結(`DRG_DB_CONNECTION`、`DRG_BATCH_MAX`)於 `src/Drg.Core/Configuration/DrgOptions.cs`(機敏不內嵌,原則 III)
 
 ## Phase 2: Foundational(阻斷性前置 — 所有故事之前須完成)
 
 **⚠️ CRITICAL**: 完成前任何使用者故事不得開工。
 
-- [ ] T005 [P] `ClaimEncounter` 模型於 `src/Drg.Core/Models/ClaimEncounter.cs`(data-model.md)
-- [ ] T006 [P] `CodingResult` 模型於 `src/Drg.Core/Models/CodingResult.cs`
-- [ ] T007 [P] `BatchJob` + `BatchStatus` enum 於 `src/Drg.Core/Models/BatchJob.cs`
-- [ ] T008 [P] 規則集參考模型(PdxMdc / MdcDrgWgt / Xicd / Ecc / EccGroup)於 `src/Drg.Core/Ruleset/`
+- [x] T005 [P] `ClaimEncounter` 模型於 `src/Drg.Core/Models/ClaimEncounter.cs`(data-model.md)
+- [x] T006 [P] `CodingResult` 模型於 `src/Drg.Core/Models/CodingResult.cs`
+- [x] T007 [P] `BatchJob` + `BatchStatus` enum 於 `src/Drg.Core/Models/BatchJob.cs`
+- [x] T008 [P] 規則集參考模型(PdxMdc / MdcDrgWgt / Xicd / Ecc / EccGroup)於 `src/Drg.Core/Ruleset/`
 - [ ] T009 參數化、provider-neutral 連線工廠於 `src/Drg.Data/DbConnectionFactory.cs`(原則 III:全參數化、無內嵌機敏)
 - [ ] T010 規則集載入(`RDDT_*` → 記憶體、版次化)於 `src/Drg.Data/RulesetRepository.cs`
 - [ ] T011 固定欄位 CSV 讀取 → `ClaimEncounter` 於 `src/Drg.Core/Io/ClaimCsvReader.cs`(FR-014 輸入相容)
