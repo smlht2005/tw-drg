@@ -16,8 +16,11 @@ public class ComboCounterTests
         return a;
     }
 
-    private static MdcDrgXicd Row(string icd, string treeDrg = "05010", string combo = "01", string item = "A")
-        => new(treeDrg, "05", 0, 0, null, combo, null, item, "X", null, null, null, null, null, null, null, "N", icd, null);
+    private static MdcDrgXicd Row(string icd, string treeDrg = "05010", string combo = "01", string item = "A", string? plus = null)
+        => new(treeDrg, "05", 0, 0, null, combo, null, item, "X", null, null, null, null, null, null, null, "N", icd, plus);
+
+    private static Xicd Op2(string icd, string? orNor = "Y", string? prm = null)
+        => new("2", icd, null, null, prm, orNor, null);
 
     [Fact]
     public void ComboA_principal_match()
@@ -63,6 +66,49 @@ public class ComboCounterTests
 
         var one = new[] { Row("D1", item: "C2") };
         new ComboCounter(one, Cm("D1")).ComboC("05010", "01", "C2").Should().BeFalse();         // CNT=1 不足
+    }
+
+    [Fact]
+    public void ComboB5_counts_or_procedures_from_xicd()
+    {
+        var c = new ComboCounter([], Cm("PDX"), opCodes: Op("OP1"), xicd: [Op2("OP1")]);
+        c.ComboB("05010", "01", "B5").Should().BeTrue();   // OR 手術命中 → CNT>0
+        new ComboCounter([], Cm("PDX"), opCodes: Op("OPX"), xicd: [Op2("OP1")])
+            .ComboB("05010", "01", "B5").Should().BeFalse();
+    }
+
+    [Fact]
+    public void ComboB_else_matches_op_against_candidate_icd_and_plus()
+    {
+        var cands = new[] { Row("OP1", item: "B"), Row("ZZ", item: "B", plus: "A+B") };
+        var c = new ComboCounter(cands, Cm("PDX"), opCodes: Op("OP1", "A+B"));
+        c.ComboB("05010", "01", "B").Should().BeTrue();    // ICD_CODE 命中非+OP、ICD_CODE_PLUS 命中+OP
+    }
+
+    [Fact]
+    public void ComboB3_is_reverse()
+    {
+        // B3:候選無命中(CNT==0)才成立
+        var c = new ComboCounter([Row("OTHER", item: "B3")], Cm("PDX"), opCodes: Op("OP1"));
+        c.ComboB("05010", "01", "B3").Should().BeTrue();
+        new ComboCounter([Row("OP1", item: "B3")], Cm("PDX"), opCodes: Op("OP1"))
+            .ComboB("05010", "01", "B3").Should().BeFalse();
+    }
+
+    [Fact]
+    public void ComboB6_requires_num_equals_cnt()
+    {
+        // B6:每個 OR 手術 OP 都要在候選列(num==CNT)
+        var cands = new[] { Row("OP1", item: "B6", plus: null) };
+        var c = new ComboCounter(cands, Cm("PDX"), opCodes: Op("OP1"), xicd: [Op2("OP1")]);
+        c.ComboB("05010", "01", "B6").Should().BeTrue();
+    }
+
+    private static string[] Op(params string[] v)
+    {
+        var a = new string[40];
+        for (var i = 0; i < 40; i++) a[i] = i < v.Length ? v[i] : "";
+        return a;
     }
 
     [Fact]
