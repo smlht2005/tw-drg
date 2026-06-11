@@ -46,7 +46,8 @@ public static class Icd10CmCheck
 
         var sexChk = Nz((row.SexChk ?? "").Trim().ToUpperInvariant());
         var ageChk = Nz((row.AgeChk ?? "").Trim());
-        var prm = Nz((row.PrmIcdChk ?? "").Trim());
+        ctx.PrmIcdChk = Nz((row.PrmIcdChk ?? "").Trim());   // H_PRM_ICD_CHK:供 mdc25 沿用
+        var prm = ctx.PrmIcdChk;
         var sexNo = Nz((row.SexNo ?? "").Trim());
 
         if (procType == 1)

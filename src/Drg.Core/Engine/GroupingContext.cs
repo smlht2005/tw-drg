@@ -18,6 +18,8 @@ public sealed class GroupingContext
     public char[] ErrCode { get; } = NewErr();        // H_ERR_CODE_1[40](CM 0–19 / OP 20–39)
     public string CcMark { get; set; } = "N";         // H_CC_MARK(N=無 / M=MCC / T / Y=CC)
     public char[] CcCode { get; } = NewCc();          // H_CC_CODE_1[20](標記貢獻 CC 的 CM 欄位)
+    public string Mdc { get; set; } = "";             // H_MDC_1(主診斷類別)
+    public string PrmIcdChk { get; set; } = "";       // H_PRM_ICD_CHK(errcode_chk 最後命中值,mdc25 沿用)
 
     private static char[] NewErr()
     {
