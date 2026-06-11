@@ -27,9 +27,9 @@ public sealed class RulesetRepository(IDbConnectionFactory factory) : IRulesetRe
                 "SELECT TREE_MDC_NO AS TreeMdcNo, TREE_DRG AS TreeDrg, TREE_NO AS TreeNo, TREE_WGT AS TreeWgt, " +
                 "AVG_EXP AS AvgExp, DEP AS Dep, COMBO_NO AS ComboNo FROM RDDT_MDC_DRGWGT_V").AsList(),
             Xicd = conn.Query<Xicd>(
-                "SELECT ICD_CODE AS IcdCode, ICD_CODE_PLUS AS IcdCodePlus, ICD_OP_TYPE AS IcdOpType, " +
-                "PRM_ICD_CHK AS PrmIcdChk, OR_NOR AS OrNor, TREE_DRG AS TreeDrg, COMBO_NO AS ComboNo, " +
-                "ITEM_TYPE AS ItemType FROM RDDT_XICD_V").AsList(),
+                "SELECT ICD_OP_TYPE AS IcdOpType, ICD_CODE AS IcdCode, SEX_CHK AS SexChk, " +
+                "AGE_CHK AS AgeChk, PRM_ICD_CHK AS PrmIcdChk, OR_NOR AS OrNor, SEX_NO AS SexNo " +
+                "FROM RDDT_XICD_V").AsList(),
             Ecc = conn.Query<Ecc>(
                 "SELECT TYPE AS Type, ICD_NO_1 AS IcdNo1, ICD_NO_GROUP AS IcdNoGroup FROM RDDT_ECC").AsList(),
             EccGroup = conn.Query<EccGroup>(

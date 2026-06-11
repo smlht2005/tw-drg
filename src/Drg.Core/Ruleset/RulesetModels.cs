@@ -8,9 +8,13 @@ public sealed record MdcDrgWgt(
     string TreeMdcNo, string TreeDrg, int TreeNo, float TreeWgt, int AvgExp,
     string? Dep, string? ComboNo);
 
+// RDDT_XICD_V:主/次診斷與手術碼的有效性/性別/年齡/排除檢核(errcode_chk_yyy 用)。
 public sealed record Xicd(
-    string IcdCode, string? IcdCodePlus, string? IcdOpType, string? PrmIcdChk,
-    string? OrNor, string TreeDrg, string ComboNo, string ItemType);
+    string? IcdOpType, string IcdCode, string? SexChk, string? AgeChk,
+    string? PrmIcdChk, string? OrNor, string? SexNo);
+
+// 註:combo_xicd_chk_yyy(T024)使用的 RDDT_DRG_XICD(TREE_DRG/COMBO_NO/ITEM_TYPE/
+// ICD_CODE_PLUS,30 張分片表)為另一張表,屆時再以獨立 record 載入。
 
 public sealed record Ecc(string Type, string IcdNo1, string IcdNoGroup);
 

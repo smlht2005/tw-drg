@@ -1,0 +1,26 @@
+namespace Drg.Core.Engine;
+
+/// <summary>單筆分組過程的可變狀態,對應 legacy rddi0001 的 H_* host 變數族。
+/// 由 orchestrator(DrgGrouper)建立,貫穿各 _yyy 等價模組讀寫(取代 legacy 的靜態全域)。</summary>
+public sealed class GroupingContext
+{
+    public required string[] CmCodes { get; init; }   // H_CM_CODE[20](已 Trim)
+    public required string[] OpCodes { get; init; }   // H_OP_CODE[20]
+    public required string Sex { get; init; }         // H_ID_SEX(SexResolver 結果)
+    public required string PartMark { get; init; }    // H_PART_MARK(部分代碼,"903"=新生兒)
+    public required string OutDate { get; init; }     // H_OUT_DATE "yyyy/MM/dd"
+    public int Ages { get; set; }                     // H_ID_AGES
+    public int Months { get; set; }                   // H_ID_MONTHS
+
+    // 跨模組輸出狀態
+    public string SexArr { get; set; } = "";          // sex_arr(供 mdc_chk 性別分流)
+    public string VSexNo { get; set; } = "";          // v_sex_no
+    public char[] ErrCode { get; } = NewErr();        // H_ERR_CODE_1[40](CM 0–19 / OP 20–39)
+
+    private static char[] NewErr()
+    {
+        var a = new char[40];
+        Array.Fill(a, ' ');
+        return a;
+    }
+}

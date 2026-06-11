@@ -61,7 +61,7 @@ description: "Task list for DRG 批次編碼 implementation"
 
 - [x] T019 [US1] 年齡/月/日計算器於 `src/Drg.Core/Engine/AgeCalculator.cs`
 - [x] T019a [US1] [M2] 性別推導(Sex 空白 → 由 Pid,legacy `convertSex`)於 `src/Drg.Core/Engine/SexResolver.cs`(FR-004 邊界;影響 MDC 11/12/13 分流)
-- [ ] T020 [US1] ICD-10-CM 驗證關卡於 `src/Drg.Core/Engine/Icd10CmCheck.cs`
+- [x] T020 [US1] ICD-10-CM 驗證關卡於 `src/Drg.Core/Engine/Icd10CmCheck.cs`(含 `GroupingContext` 狀態物件;errcode_chk_yyy + icdop_chk_yyy + chk5 組合);修正 Foundational 的 `Xicd`/`RDDT_XICD_V` schema 對齊
 - [ ] T021 [US1] ECC(CC/MCC)分級於 `src/Drg.Core/Engine/EccCheck.cs`(藍圖 `docs/ecc_chk_yyy_flow.md`)
 - [ ] T022 [US1] MDC 指派於 `src/Drg.Core/Engine/MdcCheck.cs`(藍圖 `docs/mdc_chk_yyy_flow.md`)
 - [ ] T023 [US1] combo_drg 候選產生於 `src/Drg.Core/Engine/ComboDrg.cs`(藍圖 `docs/combo_drg_yyy_flow.md`)
