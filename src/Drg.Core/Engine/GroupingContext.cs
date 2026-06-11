@@ -11,6 +11,7 @@ public sealed class GroupingContext
     public required string OutDate { get; init; }     // H_OUT_DATE "yyyy/MM/dd"
     public int Ages { get; set; }                     // H_ID_AGES
     public int Months { get; set; }                   // H_ID_MONTHS
+    public int MedAmt { get; init; }                  // H_MED_AMT(醫療費用,tree 權重以零權重列回推用)
 
     // 跨模組輸出狀態
     public string SexArr { get; set; } = "";          // sex_arr(供 mdc_chk 性別分流)
