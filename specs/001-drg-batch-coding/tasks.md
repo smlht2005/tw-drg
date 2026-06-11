@@ -25,7 +25,8 @@ description: "Task list for DRG 批次編碼 implementation"
 - **US1 引擎純邏輯**:`AgeCalculator`/`SexResolver`(T019/T019a)、`Icd10CmCheck`(T020)、`EccCheck`(T021)、`MdcCheck`(T022)、`TreeSelector`(T025)、`CandidateFilter`(T023 marks 段)— 全數完成並測試。
 - **真實 parity**:`tools/LegacyOracle` 自真實 `rddi1000_main` 產生 25 案語料;`OracleParityTests` 驗證 `Icd10CmCheck→EccCheck→MdcCheck` 對 25 案 **MDC/CC 完全一致**。
 - **測試總計**:73 passed / 1 skip(Core 67、Parity 3、Data 2、Integration 1)。
-- **待辦關鍵路徑**:T012c(遷移批次 2:combo 表)→ T023 查詢層 + T024 `ComboXicd` → T026 `DrgGrouper` 串接 → 擴充 oracle 比對完整 DRG。
+- **資料**:遷移批次 1+2 完成(icd10.sqlite 共 10 表、1.59M 列);combo 叢集資料前置就緒。
+- **待辦關鍵路徑**:T023 查詢層 + T024 `ComboXicd` → T026 `DrgGrouper` 串接 → 擴充 oracle 比對完整 DRG。
 - **未推前置**:無(已推至 `origin/001-drg-batch-coding`)。
 
 ---
@@ -50,7 +51,7 @@ description: "Task list for DRG 批次編碼 implementation"
 - [x] T011 固定欄位 CSV 讀取 → `ClaimEncounter` 於 `src/Drg.Core/Io/ClaimCsvReader.cs`(FR-014 輸入相容)
 - [x] T012 Golden 回歸樣本測試骨架 + fixtures 於 `tests/Drg.Parity.Tests/GoldenCorpus/`(原則 II)
 - [x] T012b 參考資料遷移 **批次 1**:icd10.sdf(SQL CE)→ icd10.sqlite 五張 RDDT 核心表(`scripts/export_sdf.ps1` + `tools/Drg.Migrate`;文件 `docs/data_migration.md`);整合測試 `tests/Drg.Data.Tests/RealRulesetIntegrationTests.cs` 對真實資料驗證 MdcCheck
-- [ ] T012c 參考資料遷移 **批次 2**:combo join 表(`RDDT_MDC_DRG_XICD_V` 等 1M+ 列)— combo_drg/combo_xicd 落地前置
+- [x] T012c 參考資料遷移 **批次 2**:combo join 表(`RDDT_MDC_DRG_XICD_V` 1M 列 + `_00_V`/`_NOTIN_V`/`_UN_V` + `RDDT_DRG_MDC02_V`)→ icd10.sqlite(共 10 表、1.59M 列、89MB)— combo_drg/combo_xicd 資料前置就緒
 - [~] T012a [H1] golden corpus 來源(SC-002 / 原則 I·II)
   - [x] **legacy-oracle 語料**:`tools/LegacyOracle`(netfx x86 harness 直呼 rddi1000_main)自真實引擎產生 25 案(每 MDC 一案)→ `GoldenCorpus/legacy_oracle.json`
   - [ ] 官方 Tw-DRG 115/01/01 測試案例集(取得後併入,作為獨立來源交叉驗證)

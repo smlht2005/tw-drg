@@ -24,7 +24,23 @@ var schema = new Dictionary<string, (string Col, string Type)[]>
         ("TREE_MDC_NO", "TEXT"), ("TREE_NO", "INTEGER"), ("TREE_DRG", "TEXT"), ("TREE_WGT", "REAL"),
         ("DEP", "TEXT"), ("AVG_EXP", "INTEGER"), ("COMBO_NO", "TEXT"), ("CC_MARK", "TEXT"),
     ],
+    ["RDDT_DRG_MDC02_V"] =
+    [
+        ("COMBO_NO", "TEXT"), ("DRG_CODE", "TEXT"), ("ITEM_TYPE", "TEXT"), ("ICD_CODE", "TEXT"), ("GROUP_NO", "TEXT"),
+    ],
 };
+
+// 4 張 RDDT_MDC_DRG_XICD_*(combo_drg 候選 join)共用欄位
+(string, string)[] xicdJoin =
+[
+    ("TREE_MDC_NO", "TEXT"), ("TREE_NO", "INTEGER"), ("TREE_DRG", "TEXT"), ("TREE_WGT", "REAL"),
+    ("DEP", "TEXT"), ("COMBO_NO", "TEXT"), ("CC_MARK", "TEXT"), ("AGE_MARK", "TEXT"), ("LIVE_MARK", "TEXT"),
+    ("AGE_18Y", "TEXT"), ("AGE_36Y", "TEXT"), ("AGE_41Y", "TEXT"), ("AGE_5Y_65Y", "TEXT"),
+    ("AGE_2Y", "TEXT"), ("AGE_28D", "TEXT"), ("AGE_2D", "TEXT"),
+    ("ITEM_TYPE", "TEXT"), ("ICD_CODE", "TEXT"), ("ICD_CODE_PLUS", "TEXT"),
+];
+foreach (var t in new[] { "RDDT_MDC_DRG_XICD_V", "RDDT_MDC_DRG_XICD_00_V", "RDDT_MDC_DRG_XICD_NOTIN_V", "RDDT_MDC_DRG_XICD_UN_V" })
+    schema[t] = xicdJoin;
 
 if (File.Exists(dbPath)) File.Delete(dbPath);
 using var conn = new SqliteConnection($"Data Source={dbPath}");

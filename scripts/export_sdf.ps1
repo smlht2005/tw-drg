@@ -9,13 +9,25 @@ $outDir = Join-Path $root 'migration'
 New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 $inv = [System.Globalization.CultureInfo]::InvariantCulture
 
+# 4 張 RDDT_MDC_DRG_XICD_* 共用欄位(combo_drg 候選 join)
+$xicdJoinCols = @('TREE_MDC_NO','TREE_NO','TREE_DRG','TREE_WGT','DEP','COMBO_NO','CC_MARK','AGE_MARK',
+    'LIVE_MARK','AGE_18Y','AGE_36Y','AGE_41Y','AGE_5Y_65Y','AGE_2Y','AGE_28D','AGE_2D',
+    'ITEM_TYPE','ICD_CODE','ICD_CODE_PLUS')
+
 # table -> 欄位清單(僅匯出引擎需要者)
 $spec = [ordered]@{
+    # 批次 1:已建模組
     'RDDT_XICD_V'       = @('ICD_OP_TYPE','ICD_CODE','SEX_CHK','AGE_CHK','PRM_ICD_CHK','OR_NOR','SEX_NO')
     'RDDT_ECC_V'        = @('ICD_NO_1','TYPE','ICD_NO_GROUP')
     'RDDT_ECC_GROUP_V'  = @('ICD_NO_GROUP','ICD_NO')
     'RDDT_PDX_MDC_V'    = @('ICD_NO','MDC_CODE','CC','OP')
     'RDDT_MDC_DRGWGT_V' = @('TREE_MDC_NO','TREE_NO','TREE_DRG','TREE_WGT','DEP','AVG_EXP','COMBO_NO','CC_MARK')
+    # 批次 2:combo 叢集
+    'RDDT_MDC_DRG_XICD_V'       = $xicdJoinCols
+    'RDDT_MDC_DRG_XICD_00_V'    = $xicdJoinCols
+    'RDDT_MDC_DRG_XICD_NOTIN_V' = $xicdJoinCols
+    'RDDT_MDC_DRG_XICD_UN_V'    = $xicdJoinCols
+    'RDDT_DRG_MDC02_V'  = @('COMBO_NO','DRG_CODE','ITEM_TYPE','ICD_CODE','GROUP_NO')
 }
 
 $cs = "Data Source=$root\icd10.sdf;Max Database Size=2048;"
