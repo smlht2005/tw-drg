@@ -14,6 +14,8 @@ public sealed class GroupingContext
     public int Days { get; set; }                     // H_ID_DAYS(住院/年齡日數,combo_drg 年齡條件用)
     public int MedAmt { get; init; }                  // H_MED_AMT(醫療費用,tree 權重以零權重列回推用)
     public string TranCode { get; init; } = "";       // H_TRAN_CODE(轉歸碼,combo_drg LIVE_MARK 用)
+    public string Birthday { get; init; } = "";        // H_ID_BIRTHDAY "yyyy/MM/dd"(ComboXicd case 74)
+    public string ChildBirthday { get; init; } = "";   // H_CHILD_BIRTHDAY(903 新生兒)
     public string DepFlag { get; set; } = "";         // v_depflag(P=外科 / M=內科)
     public string FilterMdc { get; set; } = "";       // v_MDC_1(候選查詢用 MDC,可為 00/UN/22…)
 

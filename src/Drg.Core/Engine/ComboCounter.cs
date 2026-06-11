@@ -12,6 +12,9 @@ public sealed class ComboCounter
     private readonly IReadOnlyList<Xicd> _xicd;
     private readonly string _vOpWk;
 
+    /// <summary>上一次 ComboA/B/C 計得的 CNT(legacy 靜態 CNT;ComboXicd 數個 case 用以守門)。</summary>
+    public int LastCnt { get; private set; }
+
     public ComboCounter(
         IReadOnlyList<MdcDrgXicd> candidates, string[] cmCodes,
         string[]? opCodes = null, IReadOnlyList<Xicd>? xicd = null, string vOpWk = "")
@@ -29,16 +32,16 @@ public sealed class ComboCounter
         IEnumerable<string> wanted = itemType is "A2" or "A4"
             ? _cm.Skip(1).Where(c => !string.IsNullOrWhiteSpace(c)).Select(c => c.Trim())
             : [_cm[0].Trim()];
-        var cnt = DistinctIcd(treeDrg, comboNo, itemType, wanted.ToHashSet());
-        return ComboMatchRule.MatchA(itemType, cnt);
+        LastCnt = DistinctIcd(treeDrg, comboNo, itemType, wanted.ToHashSet());
+        return ComboMatchRule.MatchA(itemType, LastCnt);
     }
 
     // combo_CX:比對所有 CM 碼。CNT = distinct ICD_CODE。
     public bool ComboC(string treeDrg, string comboNo, string itemType)
     {
         var set = _cm.Where(c => !string.IsNullOrWhiteSpace(c)).Select(c => c.Trim()).ToHashSet();
-        var cnt = DistinctIcd(treeDrg, comboNo, itemType, set);
-        return ComboMatchRule.MatchC(itemType, cnt);
+        LastCnt = DistinctIcd(treeDrg, comboNo, itemType, set);
+        return ComboMatchRule.MatchC(itemType, LastCnt);
     }
 
     // combo_BX:四分支(B5 / B6·B8·B13 / 特例 COMBO / else)。
@@ -87,6 +90,7 @@ public sealed class ComboCounter
                 .Distinct().Count();
         }
 
+        LastCnt = cnt;
         return ComboMatchRule.MatchB(itemType, cnt, num);
     }
 
