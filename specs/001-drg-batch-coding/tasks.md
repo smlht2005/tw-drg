@@ -32,8 +32,19 @@ description: "Task list for DRG 批次編碼 implementation"
 - **T023 combo_drg 骨架:完成**。`ComboDrg.Generate`(`src/Drg.Core/Engine/ComboDrg.cs`,純函式)— marks(CandidateFilter)+ opflag ⑥(opflag=2 比 CM A/C、opflag=1 比 OP B 含 '+' 組合碼)+ MDC08 手術/非手術組 PDX_MDC 特例 + dedup/TREE_DRG DESC + 串 ComboXicd(case 5 取 MappedTreeDrg)。11 合成測試。**已 commit `eb18a82`**。
 - **測試總計**:Drg.Core.Tests **117 passed**(ComboXicd 6 + ComboDrg 11)+ Data 4 + Parity 3 + Integration 1。
 - **資料**:遷移批次 1+2 完成(icd10.sqlite 共 10 表、1.59M 列);combo 叢集資料前置就緒。
-- **待辦關鍵路徑(下一輪第一順位)**:**T026 `DrgGrouper` 主編排**(rddi1000_main 等價:接 CandidateRepository 載入候選 → 逐 MDC/外科內科 pass 設 opflag/depflag → ComboDrg.Generate → TreeSelector;產生 DRG/MDC/CC)→ **擴充 oracle 含 OP 外科案,啟用完整 DRG 一致性比對**(目前 ComboDrg/ComboXicd 只有合成「粗錯偵測」測試)。
-  - **已知資料缺口**:ComboXicd 計數暫以 `MdcDrgXicd` 候選列近似 → 需補 **RDDT_DRG_XICD 專屬表**的 repository,full DRG 驗證才會準。
+- **待辦關鍵路徑(下一輪)**:**T026 `DrgGrouper` 主編排**(rddi1000_main 等價,rddi0001 604–979)。**採由下而上:先各自把缺的依賴當獨立單元移植+測,再組 DrgGrouper**(避免在無真值下盲打 375 行主流程)。T026 依賴地圖(從原始碼數出):
+  1. **XICD collection 表**(Type1_Chk1/Chk6/Chk8、Type1、Type2_ChkX)→ YYY/ZZZ/WWW/GGG 哨兵 + OR 手術偵測。表未載、repo 未建。
+  2. `ophhh_chk_yyy` → HHH 哨兵。未移植。
+  3. `Op_Code_Rtn_yyy` → 多手術 `+` 組合展開。未移植。
+  4. `drg_chk_yyy` → DEPP 前匹配判定。未移植。
+  5. `UNF_MDC_99_CHK_yyy` → 找不到分群的 UN 退路。未移植。
+  6. `mdc_icd9cm_yyy` → MDC14 產科。未移植。
+  7. DEPP 過濾 + 外科/內科分流 + 心臟 SP_OP 特例(11201/11601/11602,820–979)。未移植。
+  8. **`ICandidateSource` seam**:Core 主編排要載候選但不能依賴 Drg.Data → 在 Core 定義介面、Data 實作(adapter over `CandidateRepository`)。
+  9. **RDDT_DRG_XICD 專屬表 repo**:ComboXicd 計數目前以 `MdcDrgXicd` 近似;補此表 full DRG 驗證才準。
+  - **既有可直接串的件**:`Icd10CmCheck`(-1)、`EccCheck`、`MdcCheck`、`ComboDrg.Generate`、`TreeSelector`、`CandidateRepository`(主視圖∪NotIn∪UN + Load00)。MDC19/20→"XXX" 哨兵最簡單。
+  - **串接範式參考**:`tests/Drg.Parity.Tests/OracleParityTests.cs` 已示範 `Icd10CmCheck→EccCheck→MdcCheck` 用真實 ruleset 跑;DrgGrouper 接續其後,完成後擴充該測試比對 **DRG**(語料 `legacy_oracle.json` 已含 `Drg` 欄,目前未比)。
+  - **目標**:組完後擴充 oracle 含 OP 外科案,**第一次對真值驗證完整 DRG**。
   - **T024 已知 detail gap**:case 5 mdc02 子查詢仍以一般候選表近似(`AMdc02` → `RDDT_DRG_MDC02` 專屬路徑待補);case 74 ERR 副作用已實作但未經 oracle 驗證。
 - **未推前置**:C1 4 commit(`95ee2ae`/`a81ed19`/`025d210`/`55e8176`)+ 本輪 ComboXicd commit 在本地**待 git push**。
 
