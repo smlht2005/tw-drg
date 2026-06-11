@@ -52,15 +52,15 @@ description: "Task list for DRG 批次編碼 implementation"
 ### Tests(先寫、先失敗 — 原則 IV)⚠️
 
 - [ ] T014 [P] [US1] Parity 測試:golden corpus 合法案件期望 DRG/MDC/CC 於 `tests/Drg.Parity.Tests/Us1GroupingTests.cs`
-- [ ] T015 [P] [US1] 單元:年齡計算(含 part_code 903 新生兒)於 `tests/Drg.Core.Tests/AgeCalculatorTests.cs`
+- [x] T015 [P] [US1] 單元:年齡計算(含月/日與量化怪癖)於 `tests/Drg.Core.Tests/AgeCalculatorTests.cs`;性別推導於 `tests/Drg.Core.Tests/SexResolverTests.cs`
 - [ ] T016 [P] [US1] 單元:CC/MCC 分級(含主診斷涵蓋排除)於 `tests/Drg.Core.Tests/EccCheckTests.cs`
 - [ ] T017 [P] [US1] 單元:MDC 指派(24/25/1–23 優先序)於 `tests/Drg.Core.Tests/MdcCheckTests.cs`
 - [ ] T018 [P] [US1] 單元:tree 權重決選(MDC15 順位、權重 tie-break)於 `tests/Drg.Core.Tests/TreeSelectorTests.cs`
 
 ### Implementation
 
-- [ ] T019 [US1] 年齡/月/日計算器於 `src/Drg.Core/Engine/AgeCalculator.cs`
-- [ ] T019a [US1] [M2] 性別推導(Sex 空白 → 由 Pid,legacy `convertSex`)於 `src/Drg.Core/Engine/SexResolver.cs`(FR-004 邊界;影響 MDC 11/12/13 分流)
+- [x] T019 [US1] 年齡/月/日計算器於 `src/Drg.Core/Engine/AgeCalculator.cs`
+- [x] T019a [US1] [M2] 性別推導(Sex 空白 → 由 Pid,legacy `convertSex`)於 `src/Drg.Core/Engine/SexResolver.cs`(FR-004 邊界;影響 MDC 11/12/13 分流)
 - [ ] T020 [US1] ICD-10-CM 驗證關卡於 `src/Drg.Core/Engine/Icd10CmCheck.cs`
 - [ ] T021 [US1] ECC(CC/MCC)分級於 `src/Drg.Core/Engine/EccCheck.cs`(藍圖 `docs/ecc_chk_yyy_flow.md`)
 - [ ] T022 [US1] MDC 指派於 `src/Drg.Core/Engine/MdcCheck.cs`(藍圖 `docs/mdc_chk_yyy_flow.md`)
