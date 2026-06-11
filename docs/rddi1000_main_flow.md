@@ -37,7 +37,7 @@ flowchart TD
 
     S6 -- 否 --> OP["掃描 H_OP_CODE[0..19] 建 ICDOP_TAB<br/>Type2_ChkX 命中 → v_icd_no_op = OR (開刀房手術)<br/>op_count > 1 → Op_Code_Rtn_yyy() 多手術展開"]
 
-    OP --> C00["v_MDC_1 = 00<br/>Merge RDDT_MDC_DRG_XICD_00<br/>combo_drg_yyy(\"00\")"]
+    OP --> C00["v_MDC_1 = 00<br/>Merge RDDT_MDC_DRG_XICD_00<br/>combo_drg_yyy(&quot;00&quot;)"]
     C00 --> Q00{"v_DRG_1 已產生 ?"}
     Q00 -- "是, 且不在 {48201,48202,48301,48302}" --> Ret00(["mdc/drg = 00組結果 → 回傳 0"])
     Q00 -- "是, 屬 482xx/483xx" --> Stash["暫存 v_MDC_2 / v_DRG_2"]

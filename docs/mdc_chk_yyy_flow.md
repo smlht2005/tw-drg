@@ -47,7 +47,7 @@ flowchart TD
     SetCombo --> Done
     SetSingle --> Done
 
-    Single -- 否 --> Fail["三類皆未認領<br/>H_MDC_1 = \"\" (空)<br/>return 1403"]
+    Single -- 否 --> Fail["三類皆未認領<br/>H_MDC_1 = &quot;&quot; (空)<br/>return 1403"]
     Fail --> DoneEmpty(["H_MDC_1 為空 → 結束<br/>(回 rddi1000_main 後續走 UN / 99 處理)"])
 
     classDef assigned fill:#e0ffe0,stroke:#0a0;
