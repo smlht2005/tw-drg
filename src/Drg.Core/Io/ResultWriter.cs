@@ -12,12 +12,12 @@ namespace Drg.Core.Io;
 /// </summary>
 public sealed class ResultWriter : IResultWriter
 {
-    public void Write(string path, IEnumerable<CodingResult> results)
+    public void Write(string path, IEnumerable<CodingResult> results, string rulesetVersion)
     {
         using var writer = new StreamWriter(path, append: false, new UTF8Encoding(encoderShouldEmitUTF8Identifier: true));
         using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
 
-        foreach (var header in new[] { "列號", "DRG", "MDC", "併發症註記", "併發症碼", "錯誤註記", "檔案格式錯誤備註" })
+        foreach (var header in new[] { "列號", "DRG", "MDC", "併發症註記", "併發症碼", "錯誤註記", "檔案格式錯誤備註", "規則版本" })
             csv.WriteField(header);
         csv.NextRecord();
 
@@ -30,6 +30,7 @@ public sealed class ResultWriter : IResultWriter
             csv.WriteField(r.CcCode);
             csv.WriteField(r.ErrNo);
             csv.WriteField(r.ErrDesc);
+            csv.WriteField(rulesetVersion);   // FR-013:每列自描述規則版本
             csv.NextRecord();
         }
     }

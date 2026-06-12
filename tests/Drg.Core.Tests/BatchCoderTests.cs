@@ -26,7 +26,12 @@ public class BatchCoderTests
     private sealed class CapturingWriter : IResultWriter
     {
         public readonly List<CodingResult> Written = [];
-        public void Write(string path, IEnumerable<CodingResult> results) => Written.AddRange(results);
+        public string? Version;
+        public void Write(string path, IEnumerable<CodingResult> results, string rulesetVersion)
+        {
+            Version = rulesetVersion;
+            Written.AddRange(results);
+        }
     }
 
     [Fact]
@@ -49,6 +54,7 @@ public class BatchCoderTests
         job.StartedAt.Should().NotBeNull();
         job.EndedAt.Should().NotBeNull();
         writer.Written.Should().HaveCount(2);               // 零丟棄(FR-007)
+        writer.Version.Should().Be("test-v1");              // 版本傳遞至輸出(FR-013)
     }
 
     [Fact]

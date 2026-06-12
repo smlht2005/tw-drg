@@ -20,15 +20,15 @@ public class ResultWriterTests
         var path = Path.GetTempFileName();
         try
         {
-            new ResultWriter().Write(path, results);
+            new ResultWriter().Write(path, results, "Tw-DRG 115/01/01 (v3.4.20)");
 
             var bytes = File.ReadAllBytes(path);
             bytes.Take(3).Should().Equal(new byte[] { 0xEF, 0xBB, 0xBF });   // UTF-8 BOM,利 Excel 開啟中文表頭(FR-014)
 
             var lines = File.ReadAllLines(path, Encoding.UTF8);
             lines.Should().HaveCount(3);                       // 表頭 + 2 筆,零丟棄
-            lines[0].Should().Contain("DRG").And.Contain("MDC").And.Contain("併發症註記");
-            lines[1].Should().Contain("50701").And.Contain("M");
+            lines[0].Should().Contain("DRG").And.Contain("MDC").And.Contain("併發症註記").And.Contain("規則版本");
+            lines[1].Should().Contain("50701").And.Contain("M").And.Contain("Tw-DRG 115/01/01 (v3.4.20)");
             lines[2].Should().Contain("入院日期格式錯誤");   // 錯誤列照樣輸出
         }
         finally { File.Delete(path); }
@@ -45,7 +45,7 @@ public class ResultWriterTests
         var path = Path.GetTempFileName();
         try
         {
-            new ResultWriter().Write(path, results);
+            new ResultWriter().Write(path, results, "v1");
             var lines = File.ReadAllLines(path, Encoding.UTF8);
             lines[1].Should().Contain("\"格式錯誤,欄位不足\"");
         }

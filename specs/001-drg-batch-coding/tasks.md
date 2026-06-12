@@ -131,8 +131,8 @@ description: "Task list for DRG 批次編碼 implementation"
 - [x] T025 [US1] tree 權重決選於 `src/Drg.Core/Engine/TreeSelector.cs`(藍圖 `docs/tree_yyy_flow.md`)
 - [x] T026 [US1] 分組主協調(rddi1000_main 等價)於 `src/Drg.Core/Engine/DrgGrouper.cs`(藍圖 `docs/rddi1000_main_flow.md`)— 全流程串接,對 25 案 oracle 比 DRG/MDC/CC 全一致;外科/心臟路徑待 OP 語料補驗
 - [x] T027 [US1] UTF-8 結果輸出於 `src/Drg.Core/Io/ResultWriter.cs`(FR-014)— UTF-8+BOM、中文表頭沿用 legacy 別名、CsvHelper 引號跳脫;2 測試
-- [ ] T028 [US1] 串接 `BatchCoder` happy path:讀 → 分組 → 寫 於 `src/Drg.Core/BatchCoder.cs`
-- [ ] T028a [US1] [M1] 將 `rulesetVersion`(115/01/01)標註於 `BatchJob` 與結果輸出(FR-013 可追溯)於 `src/Drg.Core/BatchCoder.cs`、`src/Drg.Core/Io/ResultWriter.cs`
+- [x] T028 [US1] 串接 `BatchCoder` happy path:讀 → 分組 → 寫 於 `src/Drg.Core/BatchCoder.cs`(主體先前已備;補真實 reader+DrgGrouper+writer 端到端整合測試於 `tests/Drg.Integration.Tests/BatchHappyPathTests.cs`,2 筆合法輸入→DRG 02004/047 正確)
+- [x] T028a [US1] [M1] 將 `rulesetVersion`(115/01/01)標註於 `BatchJob`(既有)與結果輸出(每列加「規則版本」欄)— `IResultWriter.Write` 增 `rulesetVersion` 參數,FR-013 可追溯
 
 **Checkpoint**: US1 可獨立運行——全合法檔產出正確 DRG 結果。
 

@@ -36,7 +36,7 @@ public sealed class BatchCoder(IClaimReader reader, IDrgGrouper grouper, IResult
             else job.ErrorCount++;
         }
 
-        writer.Write(outputPath, results);   // 零丟棄:全筆輸出
+        writer.Write(outputPath, results, ruleset.Version);   // 零丟棄:全筆輸出;每列標註版本(FR-013)
         job.EndedAt = DateTimeOffset.Now;
         job.Status = BatchStatus.Completed;
         return job;
