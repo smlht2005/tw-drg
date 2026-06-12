@@ -29,6 +29,7 @@ internal static class Oracle
 
         // 1) 每個 MDC 取一個不含 '+' 的真實主診斷
         var cases = new List<Case>();
+        var principalByMdc = new Dictionary<string, string>();
         using (var conn = new SqlCeConnection(cs))
         {
             conn.Open();
@@ -41,9 +42,32 @@ internal static class Oracle
                 {
                     var mdc = rd.GetString(0).Trim();
                     var icd = rd.GetString(1).Trim();
+                    principalByMdc[mdc] = icd;
                     cases.Add(new Case { Name = "MDC" + mdc + "-MED", Cm = new List<string> { icd } });
                 }
         }
+
+        // 1.5) 外科案:預先以 sqlite 探查出「同時是 RDDT_XICD Type2 OR 手術碼 且 在
+        //      RDDT_MDC_DRG_XICD 以 ITEM_TYPE B% 出現」的 OP 碼(逐 MDC 一個),配該 MDC 主診斷。
+        //      硬編於此(避免在 1M 列 SQL CE 上跑 IN-subquery 致超慢);ruleset 固定 115/01/01。
+        //      真實 grouper 對每案產出何 DRG 即真值(供 DrgGrouper 外科/DEPP/分流路徑補驗)。
+        var surgOps = new[]
+        {
+            new[] { "01", "0016070" }, new[] { "02", "02BP0ZX" }, new[] { "03", "008F0ZZ" },
+            new[] { "04", "008Q0ZZ" }, new[] { "05", "015K0ZZ" }, new[] { "06", "008Q0ZZ" },
+            new[] { "07", "008W0ZZ" }, new[] { "08", "005T0ZZ" }, new[] { "09", "027P34Z" },
+            new[] { "10", "018M0ZZ" }, new[] { "11", "00HE0MZ" }, new[] { "12", "00HE0MZ" },
+            new[] { "14", "02HV02Z" }, new[] { "16", "02HV02Z" }, new[] { "21", "0016070" },
+            new[] { "22", "0HR0X72" },
+        };
+        foreach (var so in surgOps)
+            if (principalByMdc.ContainsKey(so[0]))
+                cases.Add(new Case
+                {
+                    Name = "MDC" + so[0] + "-SURG",
+                    Cm = new List<string> { principalByMdc[so[0]] },
+                    Op = new List<string> { so[1] },
+                });
 
         // 2) 初始化 grouper(載入參考表)
         var rddi = new rddi0001();
