@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using Drg.Core.Engine;
+using Drg.Core.Models;
 using Drg.Core.Ruleset;
 using Drg.Data;
 using FluentAssertions;
@@ -97,5 +98,47 @@ public sealed class OracleParityTests
         }
 
         failures.ToString().Should().BeEmpty($"與 legacy oracle 應一致,但有不符:\n{failures}");
+    }
+
+    [SkippableFact]
+    public void Full_grouping_matches_legacy_drg()
+    {
+        var corpusPath = Path.Combine(AppContext.BaseDirectory, "GoldenCorpus", "legacy_oracle.json");
+        var dbPath = FindUp("icd10.sqlite");
+        Skip.If(!File.Exists(corpusPath), "legacy_oracle.json 不存在;先以 tools/LegacyOracle 產生語料");
+        Skip.If(dbPath is null, "icd10.sqlite 不存在;先執行 Phase A 遷移");
+
+        var cases = JsonSerializer.Deserialize<List<OracleCase>>(
+            File.ReadAllText(corpusPath),
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
+
+        var factory = new DbConnectionFactory(DbProvider.Sqlite, $"Data Source={dbPath}");
+        var rs = new RulesetRepository(factory).Load("Tw-DRG 115/01/01 (v3.4.20)");
+        var grouper = new DrgGrouper(new CandidateRepository(factory));
+
+        var failures = new StringBuilder();
+        foreach (var c in cases)
+        {
+            var claim = new ClaimEncounter
+            {
+                CmCodes = Pad(c.Cm),
+                OpCodes = Pad(c.Op),
+                Sex = c.Sex,
+                Birthday = c.Birthday,
+                InDate = c.InDate,
+                OutDate = c.OutDate,
+                PartCode = c.PartCode,
+                TranCode = c.TranCode,
+                MedAmt = c.MedAmt,
+            };
+
+            var r = grouper.Group(claim, rs);
+            if (r.Drg != c.Drg || r.Mdc != c.Mdc || r.CcMark != c.CcMark)
+                failures.AppendLine(
+                    $"{c.Name} cm={string.Join(",", c.Cm)}: DRG 期望 '{c.Drg}' 得 '{r.Drg}';" +
+                    $" MDC 期望 '{c.Mdc}' 得 '{r.Mdc}';CC 期望 '{c.CcMark}' 得 '{r.CcMark}'");
+        }
+
+        failures.ToString().Should().BeEmpty($"DRGGrouper 應與 legacy oracle 一致,但有不符:\n{failures}");
     }
 }

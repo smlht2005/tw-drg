@@ -33,10 +33,16 @@ description: "Task list for DRG 批次編碼 implementation"
 - **T026 依賴單元(由下而上)進度**:
   - [x] **`SentinelCheck`**(哨兵早退,rddi1000_main 673–725)— XXX(MDC19/20)+ YYY/ZZZ/WWW/GGG(RDDT_XICD ICD_OP_TYPE=1 之 PRM_ICD_CHK 1/3·4/6/8 子表)+ HHH(`ophhh_chk_yyy` 硬編碼手術陣列 + 2020/07/01 出院日切換)。純函式 `string? Run(ctx, rs)`,`src/Drg.Core/Engine/SentinelCheck.cs`。**依賴地圖 1+2 完成**,無新資料表(XICD 已載)。14 合成測試。已 commit `1448d87`。
   - [x] **`OpCodeExpander`**(多手術 '+' 展開,`Op_Code_Rtn_yyy`→`_B8_2`)— 掃 `rs.Xicd` 含 '+' 組合碼,元件以相異槽位全數命中即展開寫 icdopTab[20+] 並回傳 v_op_wk。就地修改 40 槽表,純函式。`src/Drg.Core/Engine/OpCodeExpander.cs`。**依賴地圖 3 完成**。7 合成測試。已 commit `0cb694d`。
-  - [x] **`DrgCheck`**(`drg_chk_yyy`)— 小型 DRG 陣列比對(chk_type 0/1 + beg/end);主編排用於判定 TEMP_DRG[0..1] 是否已產出 DRG。`src/Drg.Core/Engine/DrgCheck.cs`。**依賴地圖 4 完成**。5 合成測試。**未 commit**。
-  - [x] **`ICandidateSource` 接縫**(依賴地圖 8)— 介面上移至 `src/Drg.Core/Engine/ICandidateSource.cs`(`LoadForMdc`/`Load00`),`Drg.Data.CandidateRepository` 改實作之(移除原 `ICandidateRepository`)。DrgGrouper 可只依賴 Core 介面取候選,不反向相依 Data。solution build 綠、Data 測試 4 passed。**未 commit**。
-- **測試總計**:Drg.Core.Tests **143 passed**(SentinelCheck 14 + OpCodeExpander 7 + DrgCheck 5 + ComboXicd 6 + ComboDrg 11)+ Data 4 + Parity 3 + Integration 1。
-- **依賴地圖剩餘**:5 `UNF_MDC_99_CHK_yyy`、6 `mdc_icd9cm_yyy`(此二為 combo_drg 薄包裝,屬編排黏合,離主流程難單測)、7 DEPP 過濾+外科/內科分流+心臟 SP_OP(需移植 `RDDT_MDC_DRGWGT_Collection_DEPP_MDC_Not15` 等 collection 表)、9 `RDDT_DRG_XICD` 專屬表 repo。**下一步=`DrgGrouper` 骨架**:前段(age→Icd10CmCheck→Ecc→Mdc→Sentinel)+00 組早退已可串(接縫就緒);外科/DEPP/tree 段待 dep 7。**開放問題已解**:combo_drg_yyy 的收斂點是其尾段自呼 `tree_yyy(array)`(rddi0001 1909–1917),即 `v_DRG_1 = TreeSelector.Select(ComboDrg.Generate(...), ctx, rs)`(空清單→"");主流程末 `tree_yyy(H_TEMP_DRG)` 同理。TreeSelector(T025)+ComboDrg(T023)即現成收斂件,無新依賴。**dep 7 待移植**:`RDDT_MDC_DRGWGT_Collection_DEPP_MDC_Not15`(DEPP 過濾,TREE_DRG RowFilter)+`RDDT_XICD_Collection_Type2_ChkX_ORNORN`(內科 NOR 偵測)兩張 collection——可如 SentinelCheck 以既載 rs 過濾,移植後即可串完整骨架對 oracle 比 DRG。
+  - [x] **`DrgCheck`**(`drg_chk_yyy`)— 小型 DRG 陣列比對(chk_type 0/1 + beg/end)。`src/Drg.Core/Engine/DrgCheck.cs`。**依賴地圖 4 完成**。5 合成測試。已 commit `006f75c`。
+  - [x] **`ICandidateSource` 接縫**(依賴地圖 8)— 介面上移至 `src/Drg.Core/Engine/ICandidateSource.cs`,`CandidateRepository` 改實作之。已 commit `006f75c`。
+  - [x] **dep 5/6/7/9 + 主編排 `DrgGrouper` 完成並對 oracle 驗證**(`src/Drg.Core/Engine/DrgGrouper.cs`,`IDrgGrouper` 實作):
+    - dep 5 `UNF_MDC_99_CHK_yyy`、dep 6 `mdc_icd9cm_yyy` 以 `ComboThenTree` 內聯(combo_drg 薄包裝)。
+    - dep 7 DEPP 過濾(`rs.MdcDrgWgt` 過濾 DEP=P∧MDC≠15∧TREE_DRG∈TEMP[0..2])、外科/內科(ORNORN)分流、UN(ORNORY)退路、心臟 SP_OP(SpOp/1/2/5/6 硬編碼)全內聯;兩張 collection 同 SentinelCheck 以既載 `rs` 過濾,**無需新表**。
+    - **收斂範式**:combo_drg_yyy = `ComboThenTree`(設 FilterMdc/OpFlag → 候選按 TREE_MDC_NO 分流 → `ComboDrg.Generate` → `TreeSelector` 收斂);空 OP 補 `NothingInArray` 哨兵避免 ComboDrg 守門丟例外。
+    - **🎯 第一次完整 DRG 真值驗證**:`OracleParityTests.Full_grouping_matches_legacy_drg` 用 `DrgGrouper` 對 25 案比 **DRG+MDC+CC 全數一致**(含 02004/047/.../37605 等內科 DRG、YYY/XXX/ZZZ 哨兵、2 個 -1 空案)。
+    - **修掉的兩個 bug**:① `CandidateRepository` 改選原始 `CC_MARK/AGE_MARK` 欄(原 CASE 運算式無 decltype → Microsoft.Data.Sqlite 回 byte[] 致 positional record 物化失敗),預設 'X'/'N' 移到 C# 後處理;② -1 路徑 CcMark 回 ""(非 GroupingContext 預設 "N")。
+- **測試總計**:Drg.Core.Tests **143 passed** + Data 4 + Parity 4(+1 skip)+ Integration 1 — **全綠**。
+- **T026 剩餘缺口(非阻斷)**:語料 25 案全內科,**外科/DEPP/心臟 SP_OP 路徑尚未經 oracle 驗證**(待擴充含 OP 外科案語料);dep 9 `RDDT_DRG_XICD` 專屬表仍以 `MdcDrgXicd` 近似(ComboXicd 計數),補表後 surgical full DRG 才完全準。**下一步**:T027 結果輸出 / T028 串 BatchCoder,或擴充外科語料補驗。
 - **資料**:遷移批次 1+2 完成(icd10.sqlite 共 10 表、1.59M 列);combo 叢集資料前置就緒。
 - **待辦關鍵路徑(下一輪)**:**T026 `DrgGrouper` 主編排**(rddi1000_main 等價,rddi0001 604–979)。**採由下而上:先各自把缺的依賴當獨立單元移植+測,再組 DrgGrouper**(避免在無真值下盲打 375 行主流程)。T026 依賴地圖(從原始碼數出):
   1. **XICD collection 表**(Type1_Chk1/Chk6/Chk8、Type1、Type2_ChkX)→ YYY/ZZZ/WWW/GGG 哨兵 + OR 手術偵測。表未載、repo 未建。
@@ -95,7 +101,8 @@ description: "Task list for DRG 批次編碼 implementation"
 
 - [~] T014 [P] [US1] Parity 測試:對 legacy-oracle 語料比對 DRG/MDC/CC
   - [x] `tests/Drg.Parity.Tests/OracleParityTests.cs`:`Icd10CmCheck→EccCheck→MdcCheck` 管線對 25 案比對 **MDC/CC**(全數一致)
-  - [ ] 完整 **DRG** 比對:待 T024/T026 後啟用(並擴充含 OP 的外科案)
+  - [x] 完整 **DRG** 比對:`Full_grouping_matches_legacy_drg` 用 `DrgGrouper` 對 25 案比 DRG+MDC+CC 全一致
+  - [ ] 擴充含 OP 的**外科案**語料(驗證外科/DEPP/心臟 SP_OP 路徑)
 - [x] T015 [P] [US1] 單元:年齡計算(含月/日與量化怪癖)於 `tests/Drg.Core.Tests/AgeCalculatorTests.cs`;性別推導於 `tests/Drg.Core.Tests/SexResolverTests.cs`
 - [x] T016 [P] [US1] 單元:CC/MCC 分級(MCC→T→CC 優先序、同群排除)於 `tests/Drg.Core.Tests/EccCheckTests.cs`
 - [x] T017 [P] [US1] 單元:MDC 指派(24/25/1–23 優先序、性別分流 B/T)於 `tests/Drg.Core.Tests/MdcCheckTests.cs`
@@ -118,7 +125,7 @@ description: "Task list for DRG 批次編碼 implementation"
   - [ ] **完整 DRG 一致性**:待串 combo_drg 最小骨架 + 主編排後以 oracle 驗證(目前僅合成粗錯偵測)
   - [ ] case 5 mdc02 子查詢(`AMdc02` 近似 → `RDDT_DRG_MDC02` 專屬路徑);case 74 oracle 驗證
 - [x] T025 [US1] tree 權重決選於 `src/Drg.Core/Engine/TreeSelector.cs`(藍圖 `docs/tree_yyy_flow.md`)
-- [ ] T026 [US1] 分組主協調(rddi1000_main 等價)於 `src/Drg.Core/Engine/DrgGrouper.cs`(藍圖 `docs/rddi1000_main_flow.md`)
+- [x] T026 [US1] 分組主協調(rddi1000_main 等價)於 `src/Drg.Core/Engine/DrgGrouper.cs`(藍圖 `docs/rddi1000_main_flow.md`)— 全流程串接,對 25 案 oracle 比 DRG/MDC/CC 全一致;外科/心臟路徑待 OP 語料補驗
 - [ ] T027 [US1] UTF-8 結果輸出於 `src/Drg.Core/Io/ResultWriter.cs`(FR-014)
 - [ ] T028 [US1] 串接 `BatchCoder` happy path:讀 → 分組 → 寫 於 `src/Drg.Core/BatchCoder.cs`
 - [ ] T028a [US1] [M1] 將 `rulesetVersion`(115/01/01)標註於 `BatchJob` 與結果輸出(FR-013 可追溯)於 `src/Drg.Core/BatchCoder.cs`、`src/Drg.Core/Io/ResultWriter.cs`
