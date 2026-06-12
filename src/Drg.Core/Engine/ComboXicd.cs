@@ -163,6 +163,8 @@ public sealed class ComboXicd(ComboCounter counter, GroupingContext ctx)
                 if (num == 0) { num = C("C"); if (num == 0) num = A("A2"); }
                 break;
             case 58:
+                num = C("C");
+                if (num != 0) break;   // combo_CX("C") 計數=0 即拒絕(legacy 2476–2481;原移植漏此守門)
                 num = C("C3");
                 if (num == 0) { num = B("B"); if (num != 0) num = A("A2"); }
                 break;

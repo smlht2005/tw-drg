@@ -42,10 +42,11 @@ description: "Task list for DRG 批次編碼 implementation"
     - **🎯 第一次完整 DRG 真值驗證**:`OracleParityTests.Full_grouping_matches_legacy_drg` 用 `DrgGrouper` 對 25 案比 **DRG+MDC+CC 全數一致**(含 02004/047/.../37605 等內科 DRG、YYY/XXX/ZZZ 哨兵、2 個 -1 空案)。
     - **修掉的兩個 bug**:① `CandidateRepository` 改選原始 `CC_MARK/AGE_MARK` 欄(原 CASE 運算式無 decltype → Microsoft.Data.Sqlite 回 byte[] 致 positional record 物化失敗),預設 'X'/'N' 移到 C# 後處理;② -1 路徑 CcMark 回 ""(非 GroupingContext 預設 "N")。
 - **測試總計**:Drg.Core.Tests **143 passed** + Data 4 + Parity 4(+1 skip)+ Integration 1 — **全綠**。
-- **外科語料補驗(2026-06-12)**:`tools/LegacyOracle/Oracle.cs` 加 **16 個外科案**(硬編 sqlite 探查出的 OP 碼:Type2 OR 手術碼 ∩ ITEM_TYPE B% 候選,配各 MDC 主診斷;真實 grouper 產真值)→ 語料共 **41 案**。`Full_grouping_matches_legacy_drg` 對 41 案比 DRG/MDC/CC:**40 案全對**(25 內科 + 15 外科,外科產真實 DRG 如 00102/04003/.../270/500)。
-  - **唯一失敗 = dep 9 缺口(已在測試明確豁免)**:`MDC22-SURG`(CM=T2000XA, OP=0HR0X72)候選 50701 之 COMBO_NO=58 走 `combo_CX("C")` 計數;`ComboCounter` 以 `MdcDrgXicd` 近似 `RDDT_DRG_XICD` 專屬表 → 誤接受外科 50701(legacy 拒絕後退內科 511)。`knownDep9Gaps` 豁免此案;補 RDDT_DRG_XICD 表 + 重接 ComboCounter 後移除。
-  - **結論**:DrgGrouper 的外科/DEPP/內外分流/SP_OP 邏輯**經 oracle 驗證正確**;唯一殘留即 dep 9(ComboXicd 計數真值)。
-- **下一步**:T027 結果輸出 / T028 串 BatchCoder（MVP 收尾），或補 dep 9（RDDT_DRG_XICD 遷移 + ComboCounter 重接,清掉 MDC22 豁免）。
+- **外科語料補驗(2026-06-12)**:`tools/LegacyOracle/Oracle.cs` 加 **16 個外科案**(硬編 sqlite 探查出的 OP 碼:Type2 OR 手術碼 ∩ ITEM_TYPE B% 候選,配各 MDC 主診斷;真實 grouper 產真值)→ 語料共 **41 案**。`Full_grouping_matches_legacy_drg` 對 41 案比 DRG/MDC/CC:**41 案全對**(25 內科 + 16 外科,外科產真實 DRG 如 00102/04003/.../270/500/511)。
+  - **MDC22-SURG 失敗 → 真因是 ComboXicd case 58 移植漏抄(非 dep 9 缺表)**:legacy case 58 首道 `num=combo_CX("C"); if(num!=0) break;`(C 計數=0 即拒絕)被漏掉,直接跳到 `C("C3")`。50701/COMBO=58 無 C 型列匹配 CM(T2000XA)→ 應拒絕退內科 511,卻因漏守門誤接受外科 50701。**已補回守門**(`ComboXicd.cs` case 58),移除豁免後 **41/41 全對**。
+  - **結論**:`combo_AX/CX` 查的是候選池 `dt_RDDT_MDC_DRGWGT_DRG_XICD`(=MdcDrgXicd),**非分片表**;dep 9 的 `RDDT_DRG_XICD[30]` 只有 `combo_BX` 的 `prepareDRG_XICD_B8` 用到,且現行 41 案未踩到差異。DrgGrouper 全路徑(內科/外科/DEPP/分流/SP_OP/combo)經 41 案 oracle 驗證一致。
+  - **殘留(理論性,非阻斷)**:① 其他未被語料覆蓋的 COMBO_NO case 可能仍有類似漏抄,需逐 case audit;② combo_BX 的 RDDT_DRG_XICD 分片表仍以 MdcDrgXicd 近似(目前未顯失敗)。
+- **下一步**:T027 結果輸出 / T028 串 BatchCoder(MVP 收尾)。
 - **資料**:遷移批次 1+2 完成(icd10.sqlite 共 10 表、1.59M 列);combo 叢集資料前置就緒。
 - **待辦關鍵路徑(下一輪)**:**T026 `DrgGrouper` 主編排**(rddi1000_main 等價,rddi0001 604–979)。**採由下而上:先各自把缺的依賴當獨立單元移植+測,再組 DrgGrouper**(避免在無真值下盲打 375 行主流程)。T026 依賴地圖(從原始碼數出):
   1. **XICD collection 表**(Type1_Chk1/Chk6/Chk8、Type1、Type2_ChkX)→ YYY/ZZZ/WWW/GGG 哨兵 + OR 手術偵測。表未載、repo 未建。

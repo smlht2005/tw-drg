@@ -116,15 +116,9 @@ public sealed class OracleParityTests
         var rs = new RulesetRepository(factory).Load("Tw-DRG 115/01/01 (v3.4.20)");
         var grouper = new DrgGrouper(new CandidateRepository(factory));
 
-        // 已知 dep 9 缺口:ComboXicd 計數以 MdcDrgXicd 近似 RDDT_DRG_XICD 專屬表。
-        // MDC22-SURG 候選 COMBO_NO=58 走 combo_CX("C") 計數,近似值與專屬表不符 → 誤接受外科 DRG
-        // 50701(legacy 拒絕後退回內科 511)。補 RDDT_DRG_XICD 表 + 重接 ComboCounter 後移除此豁免。
-        var knownDep9Gaps = new HashSet<string> { "MDC22-SURG" };
-
         var failures = new StringBuilder();
         foreach (var c in cases)
         {
-            if (knownDep9Gaps.Contains(c.Name)) continue;
             var claim = new ClaimEncounter
             {
                 CmCodes = Pad(c.Cm),
