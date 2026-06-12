@@ -1,20 +1,13 @@
 using Dapper;
+using Drg.Core.Engine;
 using Drg.Core.Ruleset;
 
 namespace Drg.Data;
 
 /// <summary>逐筆載入 combo_drg 候選 join 列(對應 legacy prepareDRG_XICD / RDDT_MDC_DRG_XICD_00)。
-/// 參數化查詢、無使用者輸入串接(原則 III)。批次上限小(SC-004),per-record 查詢成本可接受。</summary>
-public interface ICandidateRepository
-{
-    /// <summary>主編排候選表:主視圖(依 MDC + 病歷碼)∪ NotIn(依 MDC)∪ UN(全)。</summary>
-    IReadOnlyList<MdcDrgXicd> LoadForMdc(string mdc, IReadOnlyCollection<string> codes);
-
-    /// <summary>"00" 視圖候選(依病歷碼);對應 RDDT_MDC_DRG_XICD_00。</summary>
-    IReadOnlyList<MdcDrgXicd> Load00(IReadOnlyCollection<string> codes);
-}
-
-public sealed class CandidateRepository(IDbConnectionFactory factory) : ICandidateRepository
+/// 參數化查詢、無使用者輸入串接(原則 III)。批次上限小(SC-004),per-record 查詢成本可接受。
+/// 接縫 <see cref="ICandidateSource"/> 定義於 Core,供主編排 DrgGrouper 依賴(不反向相依 Drg.Data)。</summary>
+public sealed class CandidateRepository(IDbConnectionFactory factory) : ICandidateSource
 {
     // 欄位別名對齊 MdcDrgXicd;CC_MARK ''/NULL→'X'、AGE_MARK ''/NULL→'N'(legacy CASE 預設)。
     private const string Cols =

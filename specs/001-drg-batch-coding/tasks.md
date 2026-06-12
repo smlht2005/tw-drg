@@ -32,8 +32,11 @@ description: "Task list for DRG 批次編碼 implementation"
 - **T023 combo_drg 骨架:完成**。`ComboDrg.Generate`(`src/Drg.Core/Engine/ComboDrg.cs`,純函式)— marks(CandidateFilter)+ opflag ⑥(opflag=2 比 CM A/C、opflag=1 比 OP B 含 '+' 組合碼)+ MDC08 手術/非手術組 PDX_MDC 特例 + dedup/TREE_DRG DESC + 串 ComboXicd(case 5 取 MappedTreeDrg)。11 合成測試。**已 commit `eb18a82`**。
 - **T026 依賴單元(由下而上)進度**:
   - [x] **`SentinelCheck`**(哨兵早退,rddi1000_main 673–725)— XXX(MDC19/20)+ YYY/ZZZ/WWW/GGG(RDDT_XICD ICD_OP_TYPE=1 之 PRM_ICD_CHK 1/3·4/6/8 子表)+ HHH(`ophhh_chk_yyy` 硬編碼手術陣列 + 2020/07/01 出院日切換)。純函式 `string? Run(ctx, rs)`,`src/Drg.Core/Engine/SentinelCheck.cs`。**依賴地圖 1+2 完成**,無新資料表(XICD 已載)。14 合成測試。已 commit `1448d87`。
-  - [x] **`OpCodeExpander`**(多手術 '+' 展開,`Op_Code_Rtn_yyy`→`_B8_2`)— 掃 `rs.Xicd` 含 '+' 組合碼,元件以相異槽位全數命中即展開寫 icdopTab[20+] 並回傳 v_op_wk。就地修改 40 槽表,純函式。`src/Drg.Core/Engine/OpCodeExpander.cs`。**依賴地圖 3 完成**。7 合成測試。**未 commit**。
-- **測試總計**:Drg.Core.Tests **138 passed**(SentinelCheck 14 + OpCodeExpander 7 + ComboXicd 6 + ComboDrg 11)+ Data 4 + Parity 3 + Integration 1。
+  - [x] **`OpCodeExpander`**(多手術 '+' 展開,`Op_Code_Rtn_yyy`→`_B8_2`)— 掃 `rs.Xicd` 含 '+' 組合碼,元件以相異槽位全數命中即展開寫 icdopTab[20+] 並回傳 v_op_wk。就地修改 40 槽表,純函式。`src/Drg.Core/Engine/OpCodeExpander.cs`。**依賴地圖 3 完成**。7 合成測試。已 commit `0cb694d`。
+  - [x] **`DrgCheck`**(`drg_chk_yyy`)— 小型 DRG 陣列比對(chk_type 0/1 + beg/end);主編排用於判定 TEMP_DRG[0..1] 是否已產出 DRG。`src/Drg.Core/Engine/DrgCheck.cs`。**依賴地圖 4 完成**。5 合成測試。**未 commit**。
+  - [x] **`ICandidateSource` 接縫**(依賴地圖 8)— 介面上移至 `src/Drg.Core/Engine/ICandidateSource.cs`(`LoadForMdc`/`Load00`),`Drg.Data.CandidateRepository` 改實作之(移除原 `ICandidateRepository`)。DrgGrouper 可只依賴 Core 介面取候選,不反向相依 Data。solution build 綠、Data 測試 4 passed。**未 commit**。
+- **測試總計**:Drg.Core.Tests **143 passed**(SentinelCheck 14 + OpCodeExpander 7 + DrgCheck 5 + ComboXicd 6 + ComboDrg 11)+ Data 4 + Parity 3 + Integration 1。
+- **依賴地圖剩餘**:5 `UNF_MDC_99_CHK_yyy`、6 `mdc_icd9cm_yyy`(此二為 combo_drg 薄包裝,屬編排黏合,離主流程難單測)、7 DEPP 過濾+外科/內科分流+心臟 SP_OP(需移植 `RDDT_MDC_DRGWGT_Collection_DEPP_MDC_Not15` 等 collection 表)、9 `RDDT_DRG_XICD` 專屬表 repo。**下一步=`DrgGrouper` 骨架**:前段(age→Icd10CmCheck→Ecc→Mdc→Sentinel)+00 組早退已可串(接縫就緒);外科/DEPP/tree 段待 dep 7。**開放問題**:combo_drg_yyy 如何由候選清單收斂成單一 v_DRG_1(ComboDrg.Generate 回傳 list,但 00 組早退直接用 v_DRG_1)——起骨架前需先釐清這個 collapse 點(查 rddi0001 1900–1919 combo_drg 尾段)。
 - **資料**:遷移批次 1+2 完成(icd10.sqlite 共 10 表、1.59M 列);combo 叢集資料前置就緒。
 - **待辦關鍵路徑(下一輪)**:**T026 `DrgGrouper` 主編排**(rddi1000_main 等價,rddi0001 604–979)。**採由下而上:先各自把缺的依賴當獨立單元移植+測,再組 DrgGrouper**(避免在無真值下盲打 375 行主流程)。T026 依賴地圖(從原始碼數出):
   1. **XICD collection 表**(Type1_Chk1/Chk6/Chk8、Type1、Type2_ChkX)→ YYY/ZZZ/WWW/GGG 哨兵 + OR 手術偵測。表未載、repo 未建。
